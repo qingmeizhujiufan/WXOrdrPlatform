@@ -1,0 +1,140 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-table-view-cell {
+        margin-bottom: 15px;
+    }
+    .receive-info {
+        margin-bottom: 5px;
+        font-size: 18px;
+        color: #000;
+    }
+
+    .address {
+        font-size: 14px;
+        color: #797979;
+    }
+
+    .setting {
+        margin-top: 10px;
+        padding-top: 10px;
+        font-size: 14px;
+        color: #797979;
+    }
+
+        .setting:after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+
+        .setting .default {
+            margin-right: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            font-size: 20px;
+            vertical-align: 0;
+            color: #fff;
+            border: 1px solid #aaa;
+        }
+
+        .setting .edit,
+        .setting .del {
+            margin-right: 5px;
+            font-size: 20px;
+            vertical-align: 0;
+            color: #aaa;
+        }
+
+        .setting .default.active {
+            background-color: #fc5a59;
+            border: none;
+        }
+
+    .hair-line-top:before {
+        left: 0;
+        right: -15px;
+        width: auto;
+    }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("We","Home")"></a>
+    <h1 class="mui-title">我的地址</h1>
+</header>
+<div class="mui-content">
+    <ul class="mui-table-view marginTop0 marginBottom50" data-bind="foreach: addressList">
+        <li class="mui-table-view-cell">
+            <div class="receive-info">
+                <span data-bind="text: $data.receiver" style="margin-right: 15px;"></span>
+                <span data-bind="text: $data.telephone"></span>
+            </div>
+            <div class="address">
+                <span data-bind="text: $data.province"></span><span data-bind="text: $data.city"></span><span data-bind="text: $data.county"></span>&nbsp;&nbsp;<span data-bind="text: $data.area"></span>
+            </div>
+            <div class="setting hair-line-top">
+                <div class="mui-pull-left" data-bind="click: $parent.chooseDefault">
+                    <span class="mui-icon mui-icon-checkmarkempty default" data-bind="css: {active: $data.isDefault}"></span>默认地址
+                </div>
+                <div class="mui-pull-right">
+                    <span style="margin-right: 10px;"><span class="mui-icon mui-icon-compose edit"></span>编辑</span>
+                    <span><span class="mui-icon mui-icon-trash del"></span>删除</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="footer-btn" data-bind="click: addNewAddress">
+    <span>添加地址</span>
+</div>
+<script>
+    var viewModel = {
+        addressList: ko.observableArray([])
+    };
+
+    viewModel.addNewAddress = function () {
+        window.location.href = '/Home/AddAddress';
+    }
+
+    viewModel.getUserAddress = function () {
+        var param = {};
+        param.openid = '@ViewData["openid"]';
+        Comget('/Home/getUserAddress', param, function (data) {     
+            var data = data.backData;
+            var defaultAddress = {};
+            var defaultIndex = -1;
+            data.map(function (item, index) {
+                if (item.isDefault) {
+                    defaultIndex = index;
+                    defaultAddress = item;
+                    return;
+                }
+            });
+            if (defaultIndex > -1) {
+                data.splice(defaultIndex, 1);
+                data.unshift(defaultAddress);
+            }
+            console.log('data === ', data);
+            viewModel.addressList(data);
+        });
+    }
+
+    viewModel.chooseDefault = function () {
+        if (this.isDefault) return;
+        var param = {};
+        param.user_id = '@ViewData["userid"]';
+        param.address_id = this.id;
+        Comget('/Home/ChooseDefault', param, function (data) {
+            console.log('data === ', data);
+            viewModel.getUserAddress();
+            mui.toast('修改成功');
+        });
+    }
+
+    viewModel.load = function () {
+        viewModel.getUserAddress();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="aside-bar">
+    <div id="1">
+        <ul class="unstyled">
+            <li class="title">
+                <a>球队</a>
+            </li>
+            <li id="1_3">
+                <a href="@Url.Action("TeamList", "Field")"><i class="icon-road"></i>球队列表</a>
+            </li>
+            <li id="1_4">
+                <a href="@Url.Action("AddTeamInfo", "Field")"><i class="icon-plus-sign"></i>添加球队信息</a>
+            </li>
+            <li class="title">
+                <a>球场</a>
+            </li>
+            <li id="1_1">
+                <a href="@Url.Action("FieldList", "Field")"><i class="icon-road"></i>球场列表</a>
+            </li>
+            <li id="1_2">
+                <a href="@Url.Action("AddFieldInfo", "Field")"><i class="icon-plus-sign"></i>添加球场信息</a>
+            </li>        
+        </ul>
+    </div>
+
+</div>
+<footer class="copyright">
+    <a>©ygqmgolf.com 版权所有</a>
+</footer>
+<script type="text/javascript">
+    $(function () {
+        var menu_id = "@ViewData["menu_id"].ToString()";
+        $('#' + menu_id).addClass("active");
+    });
+</script>

@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "ContactUs";
+}
+
+<style type="text/css">
+    .dirction {
+        position: fixed;
+        right: 20px;
+        bottom: 150px;
+        width: 50px;
+        padding: 5px 10px;
+        height: 50px;
+        background-color: #fc5a59;
+        border-radius: 50%;
+        color: #fff;
+        text-align: center;
+        line-height: 20px;
+        font-size: 14px;
+    }
+
+    .tel {
+        position: fixed;
+        right: 20px;
+        bottom: 70px;
+        width: 50px;
+        padding: 5px 10px;
+        height: 50px;
+        background-color: #59A5FB;
+        border-radius: 50%;
+        color: #fff;
+        text-align: center;
+        line-height: 20px;
+        font-size: 14px;
+    }
+</style>
+
+<header class="mui-bar mui-bar-nav white">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="event: {tap: clickItem.bind(null, '/Home/We')}"></a>
+    <h1 class="mui-title">联系客服</h1>
+</header>
+<div class="mui-content">
+</div>
+<a class="dirction" href="http://mp.weixin.qq.com/mp/lifedetail?action=list&bid=UgcPoiEx_60876326384&from=singlemessage&isappinstalled=0#wechat_redirect">一键导航</a>
+<a class="tel" href="tel: 027-88395546">一键拨号</a>
+<script>
+    var viewModel = {
+    };
+
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+</script>
+

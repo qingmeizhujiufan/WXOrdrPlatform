@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .address {
+        font-size: 14px;
+    }
+
+    .default-label {
+        padding: 2px 7px;
+        border-radius: 7px;
+        color: #fff;
+        background-color: #fc5a59;
+    }
+
+    .mui-btn-primary, input[type=submit] {
+        color: #fff;
+        border: 1px solid #fc5a59 !important;
+        background-color: #fc5a59 !important;
+    }
+
+    .mui-spinner {
+        vertical-align: -6px;
+    }
+
+    .mui-btn-block {
+        padding: 8px 0;
+    }
+
+    .wrap-icon {
+        padding: 50px 0 30px;
+        text-align: center;
+    }
+
+        .wrap-icon .mui-icon {
+            font-size: 30vw;
+            color: #fff;
+            border-radius: 50vw;
+        }
+
+            .wrap-icon .mui-icon.ok {
+                background-color: #fc5a59;
+            }
+
+            .wrap-icon .mui-icon.warning {
+                background-color: #74bd74;
+            }
+
+        .wrap-icon .result {
+            margin-top: 20px;
+            color: #333;
+        }
+
+    .btn-group {
+        text-align: center;
+    }
+
+        .btn-group span {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 5px 20px;
+            border: 0.05rem solid #fc5a59;
+            color: #fc5a59;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+            .btn-group span.scan-order {
+                background-color: #fc5a59;
+                color: #fff;
+            }
+</style>
+<script type="text/javascript" src="~/Content/js/weixin.js"></script>
+<script type="text/javascript" src="~/Content/js/wxUtil.js"></script>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-action-back mui-icon mui-icon-arrowleft mui-pull-left"></a>
+    <h1 class="mui-title">定金支付</h1>
+</header>
+<div class="mui-content marginBottom60">
+    <ul class="mui-table-view device-project-info">
+        <li class="mui-table-view-cell">
+            <span></span>支付金额
+            <span class="mui-navigate-right"><span style="color: #fc5a59;" data-bind="text: money"></span>&nbsp;元</span>
+        </li>
+    </ul>
+    <div class="mui-content-padded marginTop40">
+        <button type="button" id="pay" class="mui-btn mui-btn-block mui-btn-primary" data-loading-text="支付中，请稍后..." data-bind="click: pay">确认支付</button>
+    </div>
+</div>
+<div class="sub-window" data-bind="css: {'active': payResult}">
+    <header class="mui-bar mui-bar-nav hair-line-bottom">
+        <h1 class="mui-title">支付结果</h1>
+    </header>
+    <div style="padding-top: 45px;">
+        <div class="wrap-icon">
+            <span class="mui-icon mui-icon-checkmarkempty ok"></span>
+            <p class="result">恭喜，支付成功~</p>
+        </div>
+        <div class="btn-group">
+            <span class="scan-order" data-bind="click: clickItem.bind(null, '/Home/OrderDetail/' + orderId)">查看订单</span>
+            <span class="scan-product" data-bind="click: clickItem.bind(null, '/Home/ProductList')">继续逛逛</span>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        orderId: '@ViewData["orderId"]',
+        orderNo: '',
+        money: ko.observable('--'),
+        payResult: ko.observable(false)
+    };
+
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.pay = function (obj, dom) {
+        mui('#pay').button('loading');
+        var JsonTemp = {
+            "body": viewModel.orderNo,
+            "out_trade_no": viewModel.orderNo,
+            "totalMoney": 1,
+            "openid": '@ViewData["openid"]'
+        };
+        var strSend = objToString(JsonTemp);
+        $.ajax({
+            type: "POST",
+            url: "/Home/WxPay",
+            data: { "SendData": strSend },
+            success: function (data) {
+                var wxJson = strToJson(data);
+                wxJson.callBack = viewModel.afterPayFor;
+                onBridgeReady(wxJson);
+            }
+        });
+    }
+
+    viewModel.afterPayFor = function () {
+        var params = {};
+        params.orderId = '@ViewData["orderId"]';
+        Compost('/Order/payOrder', JSON.stringify(params), function (data) {
+            mui.toast('支付成功');
+            mui('#pay').button('reset');
+            viewModel.payResult(true);
+        });
+    }
+
+    viewModel.getOrderInfo = function () {
+        var params = {};
+        params.orderId = '@ViewData["orderId"]';
+        Comget('/Order/getOrderInfo', params, function (data) {
+            var data = data.backData;
+            viewModel.orderNo = data.orderNo;
+            viewModel.money(data.payMoney);
+        });
+    }
+
+    viewModel.load = function () {
+        viewModel.getOrderInfo();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

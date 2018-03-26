@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "更新赛事信息";
+    Layout = "~/Views/Shared/_Layout_PC.cshtml";
+}
+<script src="~/Content/plugins/ueditor/ueditor.config.js"></script>
+<script src="~/Content/plugins/ueditor/ueditor.all.js"></script>
+<link href="~/Content/plugins/ueditor/themes/iframe.css" rel="stylesheet" />
+<script src="~/Content/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<style type="text/css">
+    .wrap-upload {
+        position: relative;
+        width: 200px;
+        height: 150px;
+        border: 1px solid #ddd;
+        text-align: center;
+        background-color: #f5f5f5;
+    }
+
+        .wrap-upload.field-content {
+            width: 400px;
+            height: 600px;
+        }
+
+        .wrap-upload i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 86px;
+            height: 86px;
+            margin-left: -43px;
+            margin-top: -43px;
+            font-size: 80px;
+            color: #cdcdcd;
+            z-index: 10;
+        }
+
+        .wrap-upload .upload {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 150px;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        .wrap-upload.field-content .upload {
+            width: 400px;
+            height: 600px;
+        }
+
+        .wrap-upload img {
+            width: 100%;
+            height: 100%;
+        }
+</style>
+<!-- 页面头部  -->
+<div class="header">
+    @{Html.RenderAction("Top", "AdminManage", new { section = "1" });}
+</div>
+
+<!-- 页面主题内容  -->
+<div class="wrap-content">
+    <div class="side-left">
+        @{Html.RenderAction("Aside", "News", new { menu_id = "1_2" });}
+    </div>
+    <div class="container side-content">
+        <div id="content" class="animated fadeInRight">
+            <div class="row-fluid">
+                <ul class="breadcrumb">
+                    <li><a href="/News/Newslist">资讯管理</a> <span class="divider">/</span></li>
+                    <li class="active">更新球队信息</li>
+                </ul>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="ibox-title">
+                        <h5>更新赛事信息</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="control-group">
+                            <label class="control-label">赛事类别：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: match_type" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">赛事封面图片：</label>
+                            <div class="controls">
+                                <div class="wrap-upload">
+                                    <img data-bind="attr: {'src': coverUrl}, css: {'hidden': coverUrl() == ''}" />
+                                    <i class="icon-picture" data-bind="css: {'hidden': coverUrl() != ''}"></i>
+                                    <input type="file" class="upload" data-bind="event: {change: fileChange}" accept="image/jpg,image/jpeg,image/png" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">宣传链接：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: url" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">赛事名称：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: title" />
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <div class="controls">
+                                <button class="btn  pink" type="button" style="padding: 10px 40px;" data-bind="click: saveTeam">修改</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        match_cover: ko.observable(''),
+        match_type: ko.observable(''),
+        coverUrl: ko.observable(''),
+        url: ko.observable(''),
+        title: ko.observable('')
+    };
+
+    viewModel.saveTeam = function () {
+        var url = viewModel.url();
+        var title = viewModel.title().trim();
+        var match_type = viewModel.match_type().trim();
+        var match_cover = viewModel.match_cover().trim();
+
+        var param = {
+            id: '@ViewBag.id',
+            url: encodeURIComponent(url),
+            title: title,
+            match_type: match_type,
+            match_cover: match_cover
+        };
+
+        $.post('/News/updateMatch', param, function (data) {
+            if (data.success) {
+                alert('修改成功');
+                window.location.reload();
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    };
+
+    viewModel.fileChange = function (data, obj) {
+        fileUpLoad(data, obj, function (src, url) {
+            viewModel.coverUrl(src);
+            viewModel.match_cover(url);
+        });
+    }
+
+    viewModel.load = function () {
+
+        var param = {};
+        param.id = '@ViewBag.id';
+
+        $.post('/News/matchDetail', param, function (data) {
+            if (data.success) {
+                var match_info = strToJson(data.backData)[0];
+                viewModel.url(decodeURIComponent(match_info.match_url));
+                viewModel.title(match_info.match_title);
+                viewModel.match_cover(match_info.match_cover);
+                viewModel.coverUrl(match_info.match_cover);
+                viewModel.match_type(match_info.match_type);
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

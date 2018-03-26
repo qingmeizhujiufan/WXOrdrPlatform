@@ -1,0 +1,228 @@
+﻿@{
+    ViewBag.Title = "修改资讯";
+    Layout = "~/Views/Shared/_Layout_PC.cshtml";
+}
+<script src="~/Content/plugins/ueditor/ueditor.config.js"></script>
+<script src="~/Content/plugins/ueditor/ueditor.all.js"></script>
+<link href="~/Content/plugins/ueditor/themes/iframe.css" rel="stylesheet" />
+<script src="~/Content/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<style type="text/css">
+    .wrap-upload {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border: 1px solid #ddd;
+        text-align: center;
+        background-color: #f5f5f5;
+    }
+
+        .wrap-upload i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 86px;
+            height: 86px;
+            margin-left: -43px;
+            margin-top: -43px;
+            font-size: 80px;
+            color: #cdcdcd;
+            z-index: 10;
+        }
+
+        .wrap-upload .upload {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        .wrap-upload img {
+            width: 100%;
+            height: 100%;
+        }
+</style>
+<!-- 页面头部  -->
+<div class="header">
+    @{Html.RenderAction("Top", "AdminManage", new { section = "1" });}
+</div>
+
+<!-- 页面主题内容  -->
+<div class="wrap-content">
+    <div class="side-left">
+        @{Html.RenderAction("Aside", "News", new { menu_id = "1_4" });}
+    </div>
+    <div class="container side-content">
+        <div id="content" class="animated fadeInRight">
+            <div class="row-fluid">
+                <ul class="breadcrumb">
+                    <li><a href="/News/NewsList">资讯列表</a> <span class="divider">/</span></li>
+                    <li class="active">资讯修改</li>
+                </ul>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="ibox-title">
+                        <h5>修改资讯</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="control-group">
+                            <label class="control-label">资讯类别：</label>
+                            <div class="controls">
+                                <select data-bind="options: typeList, optionsText: 'value', optionsValue: 'id', value: selectdType, event: { change: typeChange}"></select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">资讯封面图片：</label>
+                            <div class="controls">
+                                <div class="wrap-upload">
+                                    <img data-bind="attr: {'src': coverUrl}, css: {'hidden': coverUrl() == ''}" />
+                                    <i class="icon-picture" data-bind="css: {'hidden': coverUrl() != ''}"></i>
+                                    <input type="file" class="upload" data-bind="event: {change: fileChange}" accept="image/jpg,image/jpeg,image/png" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">资讯标题：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: news_title" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">资讯概要：</label>
+                            <div class="controls">
+                                <textarea rows="3" data-bind="value: news_brief"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">主要内容：</label>
+                            <div class="controls" style="padding-right: 15%;">
+                                <textarea id="editor" name="Contect"></textarea>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <div class="controls">
+                                <button class="btn  pink" type="button" style="padding: 10px 40px;" data-bind="click: saveNews">修改</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var editor = new baidu.editor.ui.Editor({
+        UEDITOR_HOME_URL: '../../Content/plugins/ueditor/',//配置编辑器路
+        iframeCssUrl: '../../Content/plugins/ueditor/themes/iframe.css',//样式路
+        initialContent: '',//初始化编辑器内容
+        autoHeightEnabled: true,//高度自动增长
+        minFrameHeight: 500//最小高度
+    });
+    editor.render('editor');
+
+    var saveUserInfoUrl = '/News/addNewNews';
+
+    var viewModel = {
+        typeList: ko.observableArray([{
+            id: '1',
+            value: '日常高球'
+        }, {
+            id: '2',
+            value: '赛事讯息'
+        }, {
+            id: '3',
+            value: '世界排名'
+        }, {
+            id: '4',
+            value: '球技杂谈'
+        }]),
+        selectdType: ko.observable(1),
+        coverUrl: ko.observable(''),
+        url: ko.observable(''),
+        news_title: ko.observable(''),
+        news_brief: ko.observable('')
+    };
+
+    viewModel.fileChange = function (data, obj) {
+        fileUpLoad(data, obj, function (src, url) {
+            viewModel.coverUrl(src);
+            viewModel.url(url);
+        });
+    }
+
+    viewModel.saveNews = function () {
+        var url = viewModel.url();
+        var news_title = viewModel.news_title().trim();
+        var news_brief = viewModel.news_brief().trim();
+        if (url == '') {
+            alert('封面不能为空！');
+            return;
+        }
+        if (news_title == '') {
+            alert('标题不能为空！');
+            return;
+        }
+        if (news_brief == '') {
+            alert('概要不能为空！');
+            return;
+        }
+
+        var param = {
+            id: '@ViewBag.id',
+            news_type: viewModel.typeList()[viewModel.selectdType() - 1].value,
+            news_cover: url,
+            news_title: news_title,
+            news_brief: news_brief,
+            news_content: encodeURIComponent(editor.getContent())
+        };
+
+        $.post('/News/updateNews', param, function (data) {
+            if (data.success) {
+                alert('修改成功');
+                window.location.reload();
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    };
+
+    viewModel.typeChange = function () {
+    }
+
+    viewModel.load = function () {
+        var param = {};
+        param.id = '@ViewBag.id';
+        $.post('/News/newsDetail', param, function (data) {
+            if (data.success) {
+                var newsDetail = strToJson(data.backData)[0];
+                newsDetail.news_content = decodeURIComponent(newsDetail.news_content);
+                for (var i = 0; i < viewModel.typeList().length; i++) {
+                    if (viewModel.typeList()[i].value == newsDetail.news_type) {
+                        viewModel.selectdType(i + 1);
+                    }
+                }
+                viewModel.coverUrl(newsDetail.news_cover);
+                viewModel.url(newsDetail.news_cover);
+                viewModel.news_title(newsDetail.news_title);
+                viewModel.news_brief(newsDetail.news_brief);
+                editor.addListener("ready", function () {
+                    // editor准备好之后才可以使用
+                    editor.setContent(newsDetail.news_content);
+
+                });
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

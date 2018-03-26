@@ -1,0 +1,124 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .wrap-img {
+        float: left;
+        width: 30vw;
+        height: 20vw;
+        margin-right: 15px;
+    }
+
+        .wrap-img img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .content {
+        overflow: hidden;
+    }
+
+        .content .name {
+            height: 14vw;
+            font-size: 16px;
+            color: #000;
+        }
+
+        .content .price {
+            font-size: 14px;
+            color: #fc5a59;
+        }
+
+            .content .price .num {
+                font-size: 22px;
+            }
+
+        .content .type {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            padding: 0 3px;
+            font-size: 12px;
+            border: 1px solid #fc5a59;
+            color: #fc5a59;
+            border-radius: 4px;
+        }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("Index","Home")"></a>
+    <h1 class="mui-title">产品列表</h1>
+</header>
+<div class="mui-content">
+    <form action="" onsubmit="return false;">
+        <div class="mui-input-row mui-search">
+            <input type="search" class="mui-input-clear" placeholder="搜索/产品名称" data-bind="event:{keyup:onSearch},value:conditionValue,valueUpdate:'afterkeydown'">
+        </div>
+    </form>
+    <ul class="mui-table-view marginTop0" data-bind="foreach: productList">
+        <li class="mui-table-view-cell hair-line-bottom" data-bind="click: $parent.clickItem.bind('', '/Home/ProductDetail/' + $data.id)">
+            <div class="wrap-img">
+                <img data-bind="attr: {src: $data.filePath}" />
+            </div>
+            <div class="content">
+                <div class="name" data-bind="text: $data.name"></div>
+                <div class="price">
+                    <span class="unit">&yen;</span>
+                    <span class="num" data-bind="text: $data.price"></span>
+                </div>
+                <div class="type" data-bind="text: $data.type"></div>
+            </div>
+        </li>
+    </ul>
+</div>
+<script>
+    var viewModel = {
+        productList: ko.observableArray([]),
+        conditionValue: ko.observable('')
+    };
+
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    //	搜索
+    viewModel.onSearch = function (a, e) {
+        if (e.keyCode == 13) {
+            //mui('#d_dcl_pullrefresh').pullRefresh().refresh(true);
+            //document.querySelector("[type=search]").blur();
+            //mui('#d_dcl_pullrefresh').pullRefresh().pulldownLoading();
+            viewModel.queryList();
+        }
+    }
+
+    viewModel.queryList = function () {
+        var params = {};
+        params.conditionValue = viewModel.conditionValue().trim();
+        Comget('/Product/getProductList', params, function (data) {
+            if (data.success) {
+                var productList = strToJson(data.backData);
+                productList.map(function (item, index) {
+                    var coverAttaches = item.coverAttaches;
+                    if (coverAttaches === '') {
+                        item.filePath = '/Images/test/t_1.png';
+                    } else {
+                        item.filePath = '/UpLoadFile/' + coverAttaches.split(',')[0] + '.png';
+                    }
+                });
+                viewModel.productList(productList);
+                console.log('productList == ', productList);
+            }
+
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.queryList();
+        mui('.mui-scroll-wrapper').scroll();
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

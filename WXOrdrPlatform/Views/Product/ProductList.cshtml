@@ -1,0 +1,128 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_PC.cshtml";
+}
+
+<!-- 页面头部  -->
+<div class="header">
+    @{Html.RenderAction("Top", "AdminManage", new { section = "1" });}
+</div>
+
+<!-- 页面主题内容  -->
+<div class="wrap-content">
+    <div class="side-left">
+        @{Html.RenderAction("Aside", "AdminManage", new { menu_id = "4_1" });}
+    </div>
+    <div class="container side-content">
+        <div class="row-fluid">
+            <div id="content" class="animated fadeInRight">
+                <div class="row-fluid">
+                    <ul class="breadcrumb">
+                        <li><a href="/Product/ProductList">产品管理</a> <span class="divider">/</span></li>
+                        <li class="active">产品列表</li>
+                    </ul>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>所有产品</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="clearfix">
+                                    <div class="pull-left">
+                                        <button class="btn pink" data-bind="click: add">添加产品</button>
+                                    </div>
+                                    <div class="pull-right">
+                                        <div class="input-append">
+                                            <input type="text" placeholder="请输入要查询的产品名称..." data-bind="value: conditionValue" />
+                                            <span class="add-on" data-bind="click: search"><i class="icon-search"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="span1"><i class="icon-th-list"></i></th>
+                                            <th class="span2">产品名称</th>
+                                            <th class="span1">类别</th>
+                                            <th class="span2">品牌</th>
+                                            <th class="span1">单价</th>
+                                            <th class="span1">状态</th>
+                                            <th class="span2">创建时间</th>
+                                            <th class="span2"><i class="icon-cog"></i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: productList" id="itemContainer">
+                                        <tr>
+                                            <td data-bind="text: $index() + 1"></td>
+                                            <td data-bind="text: $data.name"></td>
+                                            <td data-bind="text: $data.type"></td>
+                                            <td>
+                                                <div data-bind="text: '型材品牌：' + $data.structuralSection"></div>
+                                                <div data-bind="text: '五金配件：' + $data.hardware"></div>
+                                                <div data-bind="text: '密封胶品牌：' + $data.sealant"></div>
+                                            </td>
+                                            <td data-bind="text: $data.price"></td>
+                                            <td data-bind="text: $data.status"></td>
+                                            <td data-bind="text: $data.create_time"></td>
+                                            <td>
+                                                <a style="margin-right: 20px;" data-bind="attr: {href: '/Product/ProductDetail/' + $data.id}"><i class="icon-eye-open"></i>&nbsp;详情</a>
+                                                <a data-bind="attr: {href: '/Product/EditProduct/' + $data.id}"><i class="icon-edit"></i>&nbsp;编辑</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="holder"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        pageNumber: 1,
+        pageSize: 100000,
+        productList: ko.observableArray([]),
+        conditionValue: ko.observable('')
+    };
+
+    viewModel.add = function () {
+        window.location.href = '/Product/AddProduct';
+    }
+
+    viewModel.search = function () {
+        viewModel.queryList();
+    }
+
+    viewModel.queryList = function () {
+        var params = {};
+        params.conditionValue = viewModel.conditionValue().trim();
+        Comget('/Product/getProductList', params, function (data) {
+            if (data.success) {
+                var productList = strToJson(data.backData);
+                viewModel.productList(productList);
+                console.log('productList == ', productList);
+                $("div.holder").jPages({
+                    containerID: "itemContainer",
+                    previous: "←上一页",
+                    next: "下一页→",
+                    perPage: 10,
+                    delay: 100
+                });
+            }
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.queryList();
+    };
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

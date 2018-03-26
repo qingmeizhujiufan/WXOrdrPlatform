@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-content {
+        margin-top: 40px;
+        background-color: #fff;
+    }
+
+    .content {
+        padding: 10px 15px 30px;
+        overflow-x: hidden;
+    }
+
+        .content img {
+            width: 100% !important;
+            height: auto;
+            max-height: 100% !important;
+        }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="click: clickItem.bind(null, '/Home/CaseShow/1')"></a>
+    <h1 class="mui-title" data-bind="text: data().title">新闻详情</h1>
+</header>
+<div class="mui-content marginTop0">
+    <div class="content" data-bind="visible: detailImgList().length > 0">
+        <div data-bind="foreach: detailImgList">
+            <img data-bind="attr: {src: $data.filePath}" />
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        data: ko.observable({}),
+        detailImgList: ko.observableArray([])
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getFile = function (idList, callback) {
+        var list = [];
+        idList.map(function (item, index) {
+            var file = {
+                index: index,
+                filePath: '/UpLoadFile/' + item + '.png'
+            };
+            list.push(file);
+        });
+        if (typeof callback == 'function') {
+            callback(list);
+        }
+    }
+
+    viewModel.getCaseDetail = function () {
+        var params = {};
+        params.caseId = '@ViewData["caseId"]';
+
+        Comget('/News/getCaseDetail', params, function (data) {
+            var data = data.backData;
+            data.news_cover = '/UpLoadFile/' + data.news_cover + '.png';
+            data.title = data.title;
+            if (data.detail_img != '') {
+                viewModel.getFile(data.detail_img.split(','), function (_data) {
+                    viewModel.detailImgList(_data);
+                });
+            }
+            viewModel.data(data);
+
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getCaseDetail();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

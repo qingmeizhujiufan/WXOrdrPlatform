@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>@ViewBag.Title</title>
+    <link href="~/Dist/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/Dist/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Dist/messenger/css/messenger.css" rel="stylesheet" />
+    <link href="~/Dist/messenger/css/messenger-theme-future.css" rel="stylesheet" />
+    <link href="~/Dist/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/Dist/css/animate.css" rel="stylesheet" />
+    <link href="~/Dist/css/style-metro.css" rel="stylesheet">
+    <link href="~/Dist/jPages/css/jPages.css" rel="stylesheet" />
+    <link href="~/Dist/css/public.css" rel="stylesheet">
+    <script type="text/javascript" src="~/Dist/js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="~/Dist/knockout/knockout.js"></script>
+    <script type="text/javascript" src="~/Dist/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Dist/echarts/echarts.common.min.js"></script>
+    <script src="~/Dist/messenger/js/messenger.min.js"></script>
+    <script src="~/Dist/messenger/js/messenger-theme-future.js"></script>
+    <script src="~/Dist/jPages/js/jPages.min.js"></script>
+    <script type="text/javascript" src="~/Dist/js/public.js"></script>
+</head>
+<body>
+    <div id="content">
+        @RenderBody()
+    </div>
+    <script type="text/javascript">
+        $._messengerDefaults = {
+            extraClasses: 'messenger-fixed messenger-theme-flat messenger-on-top'
+        };
+        window.alert = function (message) {
+            $.globalMessenger().post({
+                message: message,
+                hideAfter: 3,
+                showCloseButton: true
+            });
+        };
+    </script>
+</body>
+</html>

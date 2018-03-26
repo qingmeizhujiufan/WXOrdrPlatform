@@ -1,0 +1,63 @@
+﻿@{
+    Layout = null;
+}
+<div class="aside-bar" style="height: 100%;">
+    <ul class="unstyled">
+        <li id="1" class="title">
+            <a href="@Url.Action("UserList", "User")"><i class="icon-home"></i>首页</a>
+        </li>
+        <li id="2" class="title">
+            <a><i class="icon-user"></i>人员管理</a>
+        </li>
+        <li id="2_1">
+            <a href="@Url.Action("UserList", "User")">人员总览</a>
+        </li>
+        <li id="4" class="title">
+            <a><i class="icon-bell-alt"></i>产品管理</a>
+        </li>
+        <li id="4_1">
+            <a href="@Url.Action("ProductList", "Product")">产品列表</a>
+        </li>
+        <li id="4_2">
+            <a href="@Url.Action("AddProduct", "Product")">添加产品</a>
+        </li>
+        <li id="4_3">
+            <a href="@Url.Action("BrandAdmin", "Product")">品牌管理</a>
+        </li>
+        <li id="5" class="title">
+            <a><i class="icon-sitemap"></i>订单管理</a>
+        </li>
+        <li id="5_1">
+            <a href="@Url.Action("OrderList", "Order")">订单列表</a>
+        </li>
+        <li id="6" class="title">
+            <a><i class="icon-sitemap"></i>案例和新闻管理</a>
+        </li>
+        <li id="6_1">
+            <a href="@Url.Action("CaseList", "News")">案例列表</a>
+        </li>
+        <li id="6_2">
+            <a href="@Url.Action("AddCase", "News")">添加案例</a>
+        </li>
+        <li id="6_3">
+            <a href="@Url.Action("NewsList", "News")">新闻列表</a>
+        </li>
+        <li id="6_4">
+            <a href="@Url.Action("AddNews", "News")">添加新闻</a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    (function ($) {
+        $(window).load(function () {
+            $(".aside-bar").mCustomScrollbar({
+                theme: "minimal"
+            });
+        });
+    })(jQuery);
+
+    $(function () {
+        var menu_id = "@ViewData["menu_id"].ToString()";
+        $('#' + menu_id).addClass("active");
+    });
+</script>

@@ -1,0 +1,356 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .order-list {
+        margin: 10px 0;
+    }
+
+        .order-list li {
+            position: relative;
+            margin-top: 10px;
+            background-color: #fff;
+        }
+
+            .order-list li .order-no {
+                padding: 10px;
+                color: #000;
+                font-size: 14px;
+            }
+
+            .order-list li .order-product {
+                height: calc(20vw + 20px);
+                padding: 10px;
+                background-color: #f5f5f5;
+            }
+
+            .order-list li .total-pay {
+                padding: 10px;
+                color: #999;
+                font-size: 14px;
+            }
+
+            .order-list li .order-handle {
+                padding: 10px;
+            }
+
+                .order-list li .order-handle:before {
+                    display: inline-block;
+                    left: 0;
+                    right: 0;
+                }
+
+                .order-list li .order-handle .btn {
+                    margin-left: 10px;
+                    padding: 5px 10px;
+                    font-size: 14px;
+                    border: 0.05rem solid #eee;
+                    border-radius: 2px;
+                }
+
+            .order-list li .order-state {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                color: #fc5a59;
+                font-size: 14px;
+            }
+
+    .mui-control-item span {
+        position: relative;
+    }
+
+    .number {
+        position: absolute;
+        left: 85%;
+        top: -10px;
+        width: auto;
+        height: 16px;
+        padding: 0px 7px;
+        line-height: 16px;
+        background-color: #ccc;
+        color: #fff;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+
+    .mui-active .number {
+        background-color: #fc5a59;
+        color: #fff;
+    }
+
+    .wrap-img {
+        float: left;
+        width: 30vw;
+        height: 20vw;
+        margin-right: 15px;
+    }
+
+        .wrap-img img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .content {
+        overflow: hidden;
+    }
+
+        .content .name {
+            height: 14vw;
+            font-size: 16px;
+            color: #000;
+        }
+
+    .price {
+        font-size: 14px;
+        color: #fc5a59;
+    }
+
+        .price .num {
+            font-size: 18px;
+        }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("We","Home")"></a>
+    <h1 class="mui-title">预约订单</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-segmented-control mui-segmented-control-inverted">
+        <a class="mui-control-item" href="#item0" data-bind="css: {'mui-active': id == '0'}"><span>所有订单<i class="number" data-bind="text: data().length"></i></span></a>
+        <a class="mui-control-item" href="#item1" data-bind="css: {'mui-active': id == '1'}"><span>待支付<i class="number" data-bind="text: unpaidData().length"></i></span></a>
+        <a class="mui-control-item" href="#item2" data-bind="css: {'mui-active': id == '2'}"><span>已支付<i class="number" data-bind="text: paidData().length"></i></span></a>
+        <a class="mui-control-item" href="#item3" data-bind="css: {'mui-active': id == '3'}"><span>已完成<i class="number" data-bind="text: completedData().length"></i></span></a>
+    </div>
+    <div id="pullrefresh" class="mui-content mui-scroll-wrapper sys-scroll" style="top: 40px;">
+        <div class="mui-scroll">
+            <div id="item0" class="mui-control-content" data-bind="css: {'mui-active': id == '0'}">
+                <ul class="mui-list-unstyled order-list" data-bind="foreach: data">
+                    <li class="">
+                        <div class="order-no">
+                            <span>订单编号:</span>
+                            <span data-bind="text: $data.orderNo"></span>
+                        </div>
+                        <div class="order-product">
+                            <div class="wrap-img">
+                                <img data-bind="attr: {src: $data.filePath}" />
+                            </div>
+                            <div class="content">
+                                <div class="name" data-bind="text: $data.productName"></div>
+                            </div>
+                        </div>
+                        <div class="total-pay clearfix">
+                            <div class="mui-pull-left">合计</div>
+                            <div class="price mui-pull-right">
+                                <span class="unit">&yen;</span>
+                                <span class="num" data-bind="text: $data.price"></span>
+                            </div>
+                        </div>
+                        <div class="order-handle clearfix hair-line-top">
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.scanOrder">查看订单</span>
+                            </div>
+                            <!-- ko if: $data.state == 0 -->
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.payOrder.bind(null, $data.id)">支付订单</span>
+                            </div>
+                            <div class="mui-pull-right">
+                                <span class="btn del-btn" data-bind="click: $parent.delOrder">取消订单</span>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                        <div class="order-state" data-bind="text: $data.stateText"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="item1" class="mui-control-content" data-bind="css: {'mui-active': id == '1'}">
+                <ul class="mui-table-view order-list" data-bind="foreach: unpaidData">
+                    <li class="">
+                        <div class="order-no">
+                            <span>订单编号:</span>
+                            <span data-bind="text: $data.orderNo"></span>
+                        </div>
+                        <div class="order-product" data-bind="click: $parent.clickItem.bind('', '/Home/ProductDetail/' + $data.productId)">
+                            <div class="wrap-img">
+                                <img data-bind="attr: {src: $data.filePath}" />
+                            </div>
+                            <div class="content">
+                                <div class="name" data-bind="text: $data.productName"></div>
+                            </div>
+                        </div>
+                        <div class="total-pay clearfix">
+                            <div class="mui-pull-left">合计</div>
+                            <div class="price mui-pull-right">
+                                <span class="unit">&yen;</span>
+                                <span class="num" data-bind="text: $data.price"></span>
+                            </div>
+                        </div>
+                        <div class="order-handle clearfix hair-line-top">
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.scanOrder">查看订单</span>
+                            </div>
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.payOrder.bind(null, $data.id)">支付订单</span>
+                            </div>
+                            <div class="mui-pull-right">
+                                <span class="btn del-btn" data-bind="click: $parent.delOrder">取消订单</span>
+                            </div>
+                        </div>
+                        <div class="order-state" data-bind="text: $data.stateText"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content" data-bind="css: {'mui-active': id == '2'}">
+                <ul class="mui-table-view order-list" data-bind="foreach: paidData">
+                    <li class="">
+                        <div class="order-no">
+                            <span>订单编号:</span>
+                            <span data-bind="text: $data.orderNo"></span>
+                        </div>
+                        <div class="order-product" data-bind="click: $parent.clickItem.bind('', '/Home/ProductDetail/' + $data.productId)">
+                            <div class="wrap-img">
+                                <img data-bind="attr: {src: $data.filePath}" />
+                            </div>
+                            <div class="content">
+                                <div class="name" data-bind="text: $data.productName"></div>
+                            </div>
+                        </div>
+                        <div class="total-pay clearfix">
+                            <div class="mui-pull-left">合计</div>
+                            <div class="price mui-pull-right">
+                                <span class="unit">&yen;</span>
+                                <span class="num" data-bind="text: $data.price"></span>
+                            </div>
+                        </div>
+                        <div class="order-handle clearfix hair-line-top">
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.scanOrder">查看订单</span>
+                            </div>
+                        </div>
+                        <div class="order-state" data-bind="text: $data.stateText"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="item3" class="mui-control-content" data-bind="css: {'mui-active': id == '3'}">
+                <ul class="mui-table-view order-list" data-bind="foreach: completedData">
+                    <li class="">
+                        <div class="order-no">
+                            <span>订单编号:</span>
+                            <span data-bind="text: $data.orderNo"></span>
+                        </div>
+                        <div class="order-product" data-bind="click: $parent.clickItem.bind('', '/Home/ProductDetail/' + $data.productId)">
+                            <div class="wrap-img">
+                                <img data-bind="attr: {src: $data.filePath}" />
+                            </div>
+                            <div class="content">
+                                <div class="name" data-bind="text: $data.productName"></div>
+                            </div>
+                        </div>
+                        <div class="total-pay clearfix">
+                            <div class="mui-pull-left">合计</div>
+                            <div class="price mui-pull-right">
+                                <span class="unit">&yen;</span>
+                                <span class="num" data-bind="text: $data.price"></span>
+                            </div>
+                        </div>
+                        <div class="order-handle clearfix hair-line-top">
+                            <div class="mui-pull-right">
+                                <span class="btn scan-btn" data-bind="click: $parent.scanOrder">查看订单</span>
+                            </div>
+                        </div>
+                        <div class="order-state" data-bind="text: $data.stateText"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        id: '@ViewData["id"]',
+        data: ko.observableArray([]),
+        unpaidData: ko.observableArray([]),
+        paidData: ko.observableArray([]),
+        completedData: ko.observableArray([])
+    };
+
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getUserOrderList = function () {
+        var params = {};
+        params.userId = '@ViewData["userId"]';
+        Comget('/Home/getUserOrderList', params, function (data) {
+            var data = data.backData;
+            var all = [], unpaid = [], paid = [], completed = [];
+            data.map(function (item, index) {
+                var coverAttaches = item.coverAttaches;
+                if (coverAttaches === '') {
+                    item.filePath = '/Images/test/t_1.png';
+                } else {
+                    item.filePath = '/UpLoadFile/' + coverAttaches.split(',')[0] + '.png';
+                }
+                if (item.orderNo == '') {
+                    item.orderNo = '待生成';
+                }
+
+                if (item.state == 0) {
+                    item.stateText = '待支付';
+                    unpaid.push(item);
+                }
+                if (item.state == 1) {
+                    item.stateText = '已支付';
+                    paid.push(item);
+                }
+                if (item.state == 2) {
+                    item.stateText = '交易成功';
+                    completed.push(item);
+                }
+                if (item.state == -1) {
+                    item.stateText = '已取消';
+                }
+                all.push(item);
+            });
+            viewModel.data(all);
+            viewModel.unpaidData(unpaid);
+            viewModel.paidData(paid);
+            viewModel.completedData(completed);
+
+            loadingOut();
+        });
+    };
+
+    viewModel.payOrder = function (param) {
+        window.location.href = '/Home/payFor/' + param;
+    }
+
+    viewModel.delOrder = function () {
+        var btnArray = ['等等', '确认'];
+        mui.confirm('确认取消吗？', '提示', btnArray, function (e) {
+            if (e.index == 1) {
+            } else {
+                var params = {};
+                params.orderId = '@ViewData["id"]';
+                loadingIn();
+                Compost('/Order/delOrder', JSON.stringify(params), function (data) {
+                    mui.toast('订单取消成功');
+                    viewModel.getUserOrderList();
+                });
+            }
+        })
+    }
+
+    viewModel.scanOrder = function () {
+        window.location.href = '/Home/OrderDetail/' + this.id;
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getUserOrderList();
+        if (viewModel.id == '')
+            viewModel.id = '0';
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

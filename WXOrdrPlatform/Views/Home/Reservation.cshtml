@@ -1,0 +1,261 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .address {
+        padding-right: 25px;
+        font-size: 14px;
+    }
+
+    .default-label {
+        padding: 2px 7px;
+        border-radius: 7px;
+        font-size: 12px;
+        color: #fff;
+        background-color: #fc5a59;
+    }
+
+    .mui-table-view.device-project-info .mui-table-view-cell.hair-line-bottom:after {
+        left: 15px;
+    }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="click: back"></a>
+    <h1 class="mui-title">预约购买</h1>
+</header>
+<div class="mui-content marginBottom60">
+    <ul class="mui-table-view">
+        <!-- ko ifnot: existDefaultAddress -->
+        <li class="mui-table-view-cell" data-bind="click: settingAddress">
+            <div style="color: #fc5a59;">
+                <span class="mui-icon mui-icon-plus-filled"></span>
+                <span>设置默认地址</span>
+            </div>
+            <span class="mui-navigate-right"></span>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: existDefaultAddress -->
+        <li class="mui-table-view-cell" data-bind="click: settingAddress">
+            <div>
+                <div>
+                    <span data-bind="text: address().receiver"></span>
+                    <span data-bind="text: address().telephone"></span>
+                </div>
+                <div class="address">
+                    <span class="default-label">默认地址</span>
+                    <span data-bind="text: address().province"></span>
+                    <span data-bind="text: address().city"></span>
+                    <span data-bind="text: address().county"></span>
+                    <span data-bind="text: address().area"></span>
+                </div>
+            </div>
+            <span class="mui-navigate-right"></span>
+        </li>
+        <!-- /ko -->
+    </ul>
+    <ul class="mui-table-view device-project-info" style="margin-top: 15px;">
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>姓名
+            <span>
+                <input type="text" class="mui-input-clear mui-input" data-bind="value: name, valueUpdate: 'afterkeydown'" />
+            </span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>联系方式
+            <span>
+                <input type="tel" class="mui-input-clear mui-input" data-bind="value: telephone, valueUpdate: 'afterkeydown'" />
+            </span>
+        </li>
+    </ul>
+    <ul class="mui-table-view device-project-info" style="margin-top: 15px;">
+        <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectSize">
+            <span></span>安装面积
+            <span class="mui-navigate-right" data-bind="text: size() == 0 ? '请选择' : (size() + '平方')"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectNum">
+            <span></span>安装数量
+            <span class="mui-navigate-right" data-bind="text: amount() == 0 ? '请选择' : amount"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectDate">
+            <span></span>安装时间
+            <span class="mui-navigate-right" data-bind="text: date() == '' ? '请选择' : date"></span>
+        </li>
+    </ul>
+    <ul class="mui-table-view device-project-info" style="margin-top: 15px;">
+        <li class="mui-table-view-cell">
+            <span></span>总计
+            <span>
+                <span data-bind="text: payMoney" style="color: #fc5a59;"></span>
+                <span>元</span>
+            </span>
+        </li>
+    </ul>
+</div>
+<div class="footer-btn" data-bind="click: postOrder">
+    <span>提交订单</span>
+</div>
+<script>
+    var viewModel = {
+        name: ko.observable(''),
+        telephone: ko.observable(''),
+        size: ko.observable(0),
+        amount: ko.observable(1),
+        date: ko.observable(''),
+        address: ko.observable({}),
+        payMoney: ko.observable(0.00),
+        s_pay: 0,
+        existDefaultAddress: ko.observable(false)
+    };
+
+    viewModel.back = function () {
+        if (sessionStorage.orderFromType) {
+            var orderUrl = sessionStorage.orderUrl;
+            sessionStorage.removeItem("orderUrl");
+            sessionStorage.removeItem("orderFromType");
+            window.location.href = orderUrl;
+        } else {
+            history.go(-1);
+        }
+    }
+
+    viewModel.settingAddress = function () {
+        sessionStorage.backUrl = window.location.href;
+        window.location.href = '/Home/MyAddress';
+    }
+
+    viewModel.getUserInfo = function () {
+        var param = {};
+        param.openid = '@ViewData["openid"]';
+        Comget('/User/getUserInfo', param, function (data) {
+            var data = data.backData;
+            viewModel.name(data.name);
+            viewModel.telephone(data.telephone);
+        });
+    }
+
+    viewModel.postOrder = function () {
+        if (!viewModel.existDefaultAddress()) {
+            mui.toast('请先设置默认地址');
+            return;
+        }
+        var userName = viewModel.name().trim();
+        var telephone = viewModel.telephone().trim();
+        var installSize = viewModel.size();
+        var installNum = viewModel.amount();
+        var installDate = viewModel.date();
+        var addressId = viewModel.address().id;
+        var payMoney = viewModel.payMoney();
+
+        if (userName == '') {
+            mui.toast('姓名不能为空');
+            return;
+        }
+        if (!validatePhone(telephone)) {
+            mui.toast('请选择正确的手机号码');
+            return;
+        }
+        if (installSize == 0) {
+            mui.toast('请选择安装面积');
+            return;
+        }
+        if (installDate == '') {
+            mui.toast('请选择安装时间');
+            return;
+        }
+
+        var params = {};
+        params.productId = '@ViewData["productId"]';
+        params.userId = '@ViewData["userId"]';
+        params.addressId = addressId;
+        params.userName = userName;
+        params.telephone = telephone;
+        params.installSize = installSize;
+        params.installNum = installNum;
+        params.installDate = installDate;
+        params.payMoney = payMoney;
+
+        loadingIn();
+        Compost('/Order/submitOrder', JSON.stringify(params), function (data) {
+            var orderId = data.id;
+            mui.toast('订单生成成功');
+            loadingOut();
+            setTimeout(function () {
+                window.location.href = '/Home/PayFor/' + orderId;
+            }, 350);
+        });
+    }
+
+    viewModel.selectSize = function () {
+        var picker = new mui.PopPicker();
+        var list = [];
+        for (var i = 1; i <= 100; i++) {
+            list.push({
+                value: i,
+                text:  i.toString() + '平方'
+            });
+        }
+        picker.setData(list);
+        picker.show(function (items) {
+            viewModel.size(items[0].value);
+        });
+    }
+
+    viewModel.selectNum = function () {
+        var picker = new mui.PopPicker();
+        var list = [];
+        for (var i = 1; i <= 100; i++) {
+            list.push({
+                value: i,
+                text: i.toString()
+            });
+        }
+        picker.setData(list);
+        picker.show(function (items) {
+            viewModel.amount(items[0].value);
+            viewModel.payMoney((viewModel.s_pay * items[0].value).toFixed(2));
+        });
+    }
+
+    viewModel.selectDate = function () {
+        //日期点击事件
+        var picker = new mui.DtPicker({
+            type: 'datetime'
+        });
+        picker.show(function (rs) {
+            viewModel.date(rs.value);
+            picker.dispose();
+        });
+    }
+
+    viewModel.getDefaultAddress = function () {
+        var params = {};
+        params.userId = '@ViewData["userId"]';
+        Comget('/Home/getDefaultAddress', params, function (data) {
+            var data = data.backData;
+            viewModel.existDefaultAddress(true);
+            viewModel.address(data);
+        });
+    }
+
+    viewModel.getProductInfo = function () {
+        var params = {};
+        params.id = '@ViewData["productId"]';
+        Comget('/Product/getProductInfo', params, function (data) {
+            var data = data.backData;
+            viewModel.s_pay = parseFloat(data.price);
+            viewModel.payMoney((viewModel.s_pay * viewModel.amount()).toFixed(2));
+
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getDefaultAddress();
+        viewModel.getUserInfo();
+        viewModel.getProductInfo();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

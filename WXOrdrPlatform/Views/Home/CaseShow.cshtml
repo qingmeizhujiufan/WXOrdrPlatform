@@ -1,0 +1,211 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-content {
+        margin-top: 40px;
+        background-color: #fff;
+    }
+
+        .mui-content .mui-segmented-control.mui-segmented-control-inverted .mui-control-item {
+            color: #DFE5ED !important;
+        }
+
+            .mui-content .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active:after {
+                height: 0;
+            }
+
+    .title {
+        width: 37%;
+        padding: 30px 0 40px 20px;
+    }
+
+        .title img {
+            width: 100%;
+            max-height: 100%;
+        }
+
+    .brief {
+        padding: 0 25px;
+        line-height: 1.8;
+        text-indent: 30px;
+        color: #2c333f;
+        font-size: 14px;
+    }
+
+    .aptitude {
+    }
+
+        .aptitude .wrap-img {
+            margin-bottom: 20px;
+            padding: 35px;
+            text-align: center;
+            background-color: #F9F9F9;
+        }
+
+            .aptitude .wrap-img img {
+                width: 100%;
+            }
+
+    .news-list {
+    }
+
+        .news-list .wrap-img {
+            float: left;
+            width: 30vw;
+            height: 20vw;
+            margin-right: 15px;
+        }
+
+            .news-list .wrap-img img {
+                width: 100%;
+                height: 100%;
+            }
+
+        .news-list .content {
+            overflow: hidden;
+        }
+
+            .news-list .content .name {
+                height: 14vw;
+                font-size: 16px;
+                color: #000;
+            }
+
+            .news-list .content .type {
+                position: absolute;
+                left: calc(30vw + 30px);
+                bottom: 5px;
+                padding: 0 3px;
+                font-size: 12px;
+                color: #aaa;
+            }
+
+    .mui-table-view.device-project-info .mui-table-view-cell > span:last-child {
+        width: 10%;
+    }
+
+    .mui-table-view.device-project-info .mui-table-view-cell.hair-line-bottom:after {
+        left: 15px;
+    }
+
+    .mui-table-view-cell:last-child:after, .mui-table-view-cell:last-child:before {
+        height: 1px;
+    }
+</style>
+<script src="~/Content/js/mui.lazyload.js"></script>
+<script src="~/Content/js/mui.lazyload.img.js"></script>
+<div class="mui-content marginTop0">
+    <div class="mui-segmented-control mui-segmented-control-inverted" style="background-color: #252121 !important;">
+        <a class="mui-control-item" href="#item0" data-bind="css: {'mui-active': index() == 0}">公司介绍</a>
+        <a class="mui-control-item" href="#item1" data-bind="css: {'mui-active': index() == 1}">工程实例</a>
+        <a class="mui-control-item" href="#item2" data-bind="css: {'mui-active': index() == 2}">新闻报道</a>
+        <a class="mui-control-item" href="#item3" data-bind="css: {'mui-active': index() == 3}">3D体验</a>
+    </div>
+    <div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="bottom: 50px; overflow-y: scroll;">
+        <div class="mui-scroll">
+            <div id="item0" class="mui-control-content" data-bind="css: {'mui-active': index() == 0}">
+                <div class="title">
+                    <img src="~/Images/com_1.png" />
+                </div>
+                <div class="brief">
+                    <div>武汉福星宏辉装饰工程有限公司，成立于2011年4月29日，创建人胡立峰先生，注册资金1000万元；公司现有员工300余人，是目前湖北地区规模最大、技术最强、质量最好、信誉最佳的专业公司。集产品开发、设计、制作、安装到售后服务为一体，实现计算机系统软件控制管理，完善的生产流水线，形成年生产节能门窗30万平方米的生产能力。</div>
+                    <div style="margin-top: 20px;">不积跬步，无以至千里，不积细流，无以至江海。“宏辉”人就是靠从细微入手，从点滴做起的专业态度和敬业精神，由长江港湾中的一叶小舟发展成为在市场大潮中“宏辉”击水搏浪的诺亚方舟。</div>
+                    <div style="margin-top: 20px;">公司正以骄傲的步伐迈进二十一世纪，相信在公司领导人胡立峰的决策指挥下，本着“以人为本”的人资理念，“以诚为本”的经营理念引进大批专业人才，采用科学的管理模式，应用人才、质量、竞争市场。利用管理求得发展，力争创建家喻户晓的“节能门窗，首选宏辉”。</div>
+                    <div style="margin-top: 20px;">雄关漫道真如铁，而今迈步从头越。“宏辉”人本着“以人为本”的人资理念，“以诚为本”的经营理念，更好的服务于大众，回报社会！</div>
+                </div>
+                <div class="title">
+                    <img src="~/Images/com_2.png" />
+                </div>
+                <div class="aptitude" data-bind="foreach: aptitudeList">
+                    <div class="wrap-img">
+                        <img data-bind="attr: {'data-lazyload': '/Images/aptitude/' + $data + '.png', 'data-preview-src': '/Images/aptitude/' + $data + '.png'}" />
+                    </div>
+                </div>
+            </div>
+            <div id="item1" class="mui-control-content" data-bind="css: {'mui-active': index() == 1}">
+                <ul class="mui-table-view device-project-info" data-bind="foreach: caseList">
+                    <li class="mui-table-view-cell hair-line-bottom" data-bind="click: $parent.clickItem.bind('', '/Home/CaseDetail/' + $data.id)">
+                        <span></span>
+                        <span data-bind="text: $data.title"></span>
+                        <span class="mui-navigate-right"></span>
+                    </li>
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content" data-bind="css: {'mui-active': index() == 2}">
+                <ul class="mui-table-view marginTop0 news-list" data-bind="foreach: newsList">
+                    <li class="mui-table-view-cell hair-line-bottom" data-bind="click: $parent.clickItem.bind('', '/Home/NewsDetail/' + $data.id)">
+                        <div class="wrap-img">
+                            <img data-bind="attr: {src: $data.news_cover}" />
+                        </div>
+                        <div class="content">
+                            <div class="name" data-bind="text: $data.news_title"></div>
+                            <div class="type" data-bind="text: $data.create_time"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="item3" class="mui-control-content" data-bind="css: {'mui-active': index() == 3}">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        index: ko.observable(0),
+        aptitudeList: ko.observableArray([]),
+        newsList: ko.observableArray([]),
+        caseList: ko.observableArray([])
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getCaseList = function () {
+        Comget('/News/getCaseList', null, function (data) {
+            viewModel.caseList(data.backData.content);
+        });
+    }
+
+    viewModel.getNewsList = function () {
+        var params = {};
+        params.conditionValue = '';
+
+        Comget('/News/getNewsList', params, function (data) {
+            var newsList = data.backData.content;
+            newsList.map(function (item, index) {
+                item.news_cover = '/UpLoadFile/' + item.news_cover + '.png';
+            });
+            viewModel.newsList(newsList);
+            mui(document).imageLazyload({
+                placeholder: '/Images/120_120.png'
+            });
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        if ('@ViewData["id"]' != '') {
+            viewModel.index(parseInt('@ViewData["id"]'));
+        }
+
+        var aptitudeList = [];
+        for (var i = 1; i <= 17; i++) {
+            aptitudeList.push(i);
+        }
+        viewModel.aptitudeList(aptitudeList);
+        //获取案例
+        viewModel.getCaseList();
+        //获取新闻
+        viewModel.getNewsList();
+        mui(document).imageLazyload({
+            placeholder: '/Images/120_120.png'
+        });
+        mui.previewImage();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

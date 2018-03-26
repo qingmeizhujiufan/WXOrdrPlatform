@@ -1,0 +1,272 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_PC.cshtml";
+}
+<style type="text/css">
+    .detail-imglist {
+        padding: 10px;
+        border: 1px solid #ddd;
+        min-height: 200px;
+    }
+
+        .detail-imglist li {
+            position: relative;
+            width: 200px;
+            height: 150px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            padding: 5px !important;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+            vertical-align: middle;
+        }
+
+            .detail-imglist li:last-child:hover input {
+                cursor: pointer;
+            }
+
+            .detail-imglist li img {
+                width: 100%;
+                height: 100%;
+            }
+
+            .detail-imglist li .remove {
+                position: absolute;
+                right: -10px;
+                top: -10px;
+                font-size: 22px;
+                z-index: 10;
+                color: #fc5a59;
+            }
+
+            .detail-imglist li input[type='file'] {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                line-height: 0;
+                z-index: 10;
+            }
+
+            .detail-imglist li .add {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                display: inline-block;
+                margin: -17px -48px;
+            }
+</style>
+
+<!-- 页面头部  -->
+<div class="header">
+    @{Html.RenderAction("Top", "AdminManage", new { section = "1" });}
+</div>
+
+<!-- 页面主题内容  -->
+<div class="wrap-content">
+    <div class="side-left">
+        @{Html.RenderAction("Aside", "AdminManage", new { menu_id = "4_1" });}
+    </div>
+    <div class="container side-content">
+        <div class="row-fluid">
+            <div id="content" class="animated fadeInRight">
+                <div class="row-fluid">
+                    <ul class="breadcrumb">
+                        <li><a href="/Product/ProductList">产品列表</a> <span class="divider">/</span></li>
+                        <li class="active">产品详情</li>
+                    </ul>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>产品详情</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="control-group">
+                                            <label class="control-label"></label>
+                                            <div class="controls">
+                                                <button class="btn pink" data-bind="click: edit">编辑产品</button>
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label">产品封面图：</label>
+                                            <div class="controls">
+                                                <ul class="unstyled inline detail-imglist">
+                                                    <!-- ko foreach: coverImgList -->
+                                                    <li>
+                                                        <img data-bind="attr: {src: $data.filePath}" />                                                
+                                                    </li>
+                                                    <!-- /ko -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">产品名称：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: name" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">产品类别：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: type" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">单价：</label>
+                                            <div class="controls">
+                                                <div class="input-append">
+                                                    <input type="text" data-bind="value: price" disabled />
+                                                    <span class="add-on">元</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">产品规格：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: unit" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">型材品牌：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: structuralSection" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">五金配件：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: hardware" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">密封胶品牌：</label>
+                                            <div class="controls">
+                                                <input type="text" data-bind="value: sealant" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">说明：</label>
+                                            <div class="controls">
+                                                <textarea data-bind="value: detail" disabled></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="control-group">
+                                            <label class="control-label">详情图片：</label>
+                                            <div class="controls">
+                                                <ul class="unstyled inline detail-imglist">
+                                                    <!-- ko foreach: detailImgList -->
+                                                    <li>
+                                                        <img data-bind="attr: {src: $data.filePath}" />
+                                                    </li>
+                                                    <!-- /ko -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        name: ko.observable(''),
+        type: ko.observable(''),
+        price: ko.observable(0),
+        unit: ko.observable(''),
+        detail: ko.observable(''),
+        detailImgList: ko.observableArray([]),
+        coverImgList: ko.observableArray([]),
+        structuralSection: ko.observable(''),
+        hardware: ko.observable(''),
+        sealant: ko.observable('')
+    };
+
+    viewModel.edit = function (id) {
+        window.location.href = '/Product/EditProduct/' + '@ViewData["id"]';
+    }
+
+    viewModel.getFile = function (idList, callback) {
+        var list = [];
+        idList.map(function (item, index) {
+            var file = {
+                index: index,
+                filePath: '/UpLoadFile/' + item + '.png'
+            };
+            list.push(file);
+        });
+        if (typeof callback == 'function') {
+            callback(list);
+        }
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        var params = {};
+        params.id = '@ViewData["id"]';
+        Comget('/Product/getProductInfo', params, function (data) {
+            var data = data.backData;
+            console.log('data == ', data);
+            viewModel.name(data.name);
+            viewModel.type(data.type);
+            viewModel.price(data.price);
+            viewModel.unit(data.unit);
+            viewModel.detail(data.detail);
+            viewModel.structuralSection(data.structuralSection);
+            viewModel.hardware(data.hardware);
+            viewModel.sealant(data.sealant);
+            if (data.coverAttaches != '') {
+                viewModel.getFile(data.coverAttaches.split(','), function (data) {
+                    viewModel.coverImgList(data);
+                });
+            }
+            if (data.attaches != '') {
+                viewModel.getFile(data.attaches.split(','), function (data) {
+                    viewModel.detailImgList(data);
+                });
+            }
+            loadingOut();
+        });
+    };
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

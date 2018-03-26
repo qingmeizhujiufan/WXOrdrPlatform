@@ -1,0 +1,248 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-slider .mui-slider-group .mui-slider-item img {
+        width: 100vw;
+        height: 50vw;
+    }
+
+    .base-info {
+        position: relative;
+        padding: 15px;
+        background-color: #fff;
+    }
+
+        .base-info .title {
+            font-size: 18px;
+            line-height: 30px;
+        }
+
+        .base-info .type {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            padding: 2px 8px;
+            color: #fff;
+            font-size: 14px;
+            border-radius: 11px 4px 4px 4px;
+            background-color: #fc5a59;
+        }
+
+        .base-info .price {
+            margin-top: 10px;
+            color: #fc5a59;
+        }
+
+            .base-info .price .unit {
+                font-size: 14px;
+            }
+
+            .base-info .price .new-price {
+                font-size: 24px;
+            }
+
+    .brand {
+        margin: 10px 0;
+        padding: 15px;
+        background-color: #fff;
+    }
+
+        .brand .mui-list-unstyled {
+            margin: 0;
+        }
+
+            .brand .mui-list-unstyled li {
+                width: 48%;
+                display: inline-block;
+                margin-bottom: 10px;
+                text-align: left;
+                color: #000;
+                font-size: 14px;
+            }
+
+                .brand .mui-list-unstyled li .brand-type {
+                    color: #949494;
+                }
+
+    .detail {
+        background-color: #fff;
+    }
+
+        .detail .detail-title {
+            padding: 15px;
+            color: #fc5a59;
+        }
+
+            .detail .detail-title:after {
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+
+        .detail .detail-content {
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+    .product-detailImg-list {
+        padding: 15px;
+        background-color: #fff;
+    }
+
+        .product-detailImg-list img {
+            display: block;
+            width: 100%;
+            max-height: 100%;
+            margin-bottom: 15px;
+        }
+
+    .footer-btn .consult {
+        display: inline-block;
+        float: left;
+        width: 35%;
+        background-color: #FFEAE7;
+    }
+
+        .footer-btn .consult a {
+            display: inline-block;
+            width: 100%;
+            color: #fc5a59;
+        }
+
+            .footer-btn .consult a .mui-icon {
+                font-size: 20px;
+            }
+
+    .footer-btn .order {
+        display: inline-block;
+        float: right;
+        width: 65%;
+    }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="click: clickItem.bind(null, '/Home/ProductList')"></a>
+    <h1 class="mui-title">产品详情</h1>
+</header>
+<div class="mui-content marginBottom60">
+    <div id="slider" class="mui-slider">
+        <div class="mui-slider-group mui-slider-loop">
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img data-bind="attr: {src: coverAttaches().length > 0 && coverAttaches()[coverAttaches().length - 1].filePath}" />
+                </a>
+            </div>
+            <!-- ko foreach: coverAttaches -->
+            <div class="mui-slider-item">
+                <a href="#">
+                    <img data-bind="attr: {src: $data.filePath}" />
+                </a>
+            </div>
+            <!-- /ko -->
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img data-bind="attr: {src: coverAttaches().length > 0 && coverAttaches()[0].filePath}" />
+                </a>
+            </div>
+        </div>
+        <div class="mui-slider-indicator" data-bind="foreach: coverAttaches">
+            <div class="mui-indicator" data-bind="css: {'mui-active': $index() == 0}"></div>
+        </div>
+    </div>
+    <div class="base-info">
+        <label class="title" data-bind="text: info().name">商品名称</label>
+        <span class="type" data-bind="text: info().type"></span>
+        <div class="price">
+            <span class="unit">&yen;</span>
+            <span class="new-price" data-bind="text: info().price"></span>
+        </div>
+    </div>
+    <div class="brand">
+        <ul class="mui-list-unstyled">
+            <li>
+                <span class="brand-type">型材品牌：</span>
+                <span data-bind="text: info().structuralSection"></span>
+            </li>
+            <li>
+                <span class="brand-type">五金配件：</span>
+                <span data-bind="text: info().hardware"></span>
+            </li>
+            <li>
+                <span class="brand-type">密封胶品牌：</span>
+                <span data-bind="text: info().sealant"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="detail">
+        <div class="detail-title hair-line-bottom">产品详情</div>
+        <div class="detail-content" data-bind="text: info().detail"></div>
+    </div>
+    <div class="product-detailImg-list" data-bind="foreach: attaches">
+        <img data-bind="attr: {src: $data.filePath}" />
+    </div>
+</div>
+<div class="footer-btn">
+    <div class="consult"><a href="tel: 13707176777"><span class="mui-icon mui-icon-phone-filled"></span>咨询</a></div>
+    <div class="order" data-bind="click: reservate">预定</div>
+</div>
+<script>
+    var viewModel = {
+        info: ko.observable({}),
+        attaches: ko.observableArray([]),
+        coverAttaches: ko.observableArray([])
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.reservate = function () {
+        sessionStorage.orderUrl = window.location.href;
+        sessionStorage.orderFromType = 'product';
+        window.location.href = '/Home/Reservation/' + '@ViewData["id"]';
+    };
+
+    viewModel.getProductInfo = function () {
+        var params = {
+            id: '@ViewData["id"]'
+        };
+        Comget('/Product/getProductInfo', params, function (data) {
+            var data = data.backData;
+            viewModel.info(data);
+            console.log('info == ', viewModel.info());
+            viewModel.getFile(data.coverAttaches.split(','), function (data) {
+                viewModel.coverAttaches(data);
+            });
+            viewModel.getFile(data.attaches.split(','), function (data) {
+                viewModel.attaches(data);
+            });
+
+            loadingOut();
+        });
+    }
+
+    viewModel.getFile = function (idList, callback) {
+        var list = [];
+        idList.map(function (item, index) {
+            var file = {
+                index: index,
+                filePath: '/UpLoadFile/' + item + '.png'
+            };
+            list.push(file);
+        });
+        if (typeof callback == 'function') {
+            callback(list);
+        }
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getProductInfo();
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

@@ -1,0 +1,143 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-input-group:before,
+    .mui-input-group:after {
+        height: 0;
+    }
+
+    .mui-input-group .mui-input-row {
+        height: auto;
+    }
+
+    .mui-input-group .mui-input-row:after {
+        background-color: #E0E0E0 !important;
+        transform-origin: 50% 50%;
+    }
+
+    .mui-input-group .mui-input-row:last-child:after {
+        height: 0;
+    }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("MyAddress","Home")"></a>
+    @if (ViewData["edit"].ToString() == "1") { 
+        <h1 class="mui-title">修改收货人信息</h1>
+    }
+    else
+    {
+        <h1 class="mui-title">新建收货人</h1>
+    }
+</header>
+<div class="mui-content">
+    <div class="mui-input-group">
+        <div class="mui-input-row">
+            <label>收货人:</label>
+            <input type="text" class="mui-input-clear mui-input" data-bind="value: name, valueUpdate: 'afterkeydown'">
+        </div>
+        <div class="mui-input-row">
+            <label>联系方式:</label>
+            <input type="tel" class="mui-input-clear mui-input" data-bind="value: telephone, valueUpdate: 'afterkeydown'">
+        </div>
+        <div class="mui-input-row" data-bind="click: chooseAddress">
+            <label>所在地区:</label>
+            <div class="mui-navigate-right" data-bind="text: address" style="display: inline-block; width: 55%; padding: 10px 0;"></div>
+        </div>
+        <div class="mui-input-row">
+            <label>详细地址:</label>
+            <input type="text" class="mui-input-clear mui-input" data-bind="value: area, valueUpdate: 'afterkeydown'">
+        </div>
+    </div>
+</div>
+<div class="footer-btn" data-bind="click: saveAddress">
+    <span>保存</span>
+</div>
+<script src="~/Content/js/city.data-3.js"></script>
+<script>
+    var viewModel = {
+        name: ko.observable(''),
+        telephone: ko.observable(''),
+        province: ko.observable(''),
+        city: ko.observable(''),
+        county: ko.observable(''),
+        area: ko.observable(''),
+        address: ko.observable('')
+    };
+
+    viewModel.chooseAddress = function () {
+        var cityPicker = new mui.PopPicker({
+            layer: 3
+        });
+        cityPicker.setData(cityData3);
+        cityPicker.show(function (items) {
+            var range = (items[0] || {}).text + " " + (items[1] || {}).text + " " + (items[2] || {}).text;
+            viewModel.province((items[0] || {}).text);
+            viewModel.city((items[1] || {}).text);
+            viewModel.county((items[2] || {}).text);
+            viewModel.address(range);
+            console.log('range == ', range);
+            cityPicker.dispose();
+        });
+    }
+
+    viewModel.saveAddress = function () {
+        var param = {};
+        var receiver = viewModel.name().trim();
+        var telephone = viewModel.telephone().trim();
+        var province = viewModel.province().trim();
+        var city = viewModel.city().trim();
+        var county = viewModel.county().trim();
+        var area = viewModel.area().trim();
+        if ('@ViewData["edit"]' == "1") {
+            param.id = '@ViewData["address_id"]';
+        }
+        param.userId = '@ViewData["userid"]';
+        param.receiver = receiver;
+        param.telephone = telephone;
+        param.province = province;
+        param.city = city;
+        param.county = county;
+        param.area = area;
+
+        loadingIn();
+        Compost('/Home/SaveAddress', JSON.stringify(param), function (data) {
+            console.log('data == ', data);
+            if ('@ViewData["edit"]' == "1") {
+                mui.toast('更新成功');
+            } else {
+                mui.toast('添加成功');
+            }
+            loadingOut();
+            setTimeout(function () {
+                window.location.href = '/Home/MyAddress';
+            }, 1000);
+        });
+    }
+
+    viewModel.getAddressInfo = function (id) {
+        var param = {};
+        param.id = id;
+        Comget('/Home/getAddressInfo', param, function (data) {
+            if (data.backData) {
+                var data = data.backData;
+                viewModel.name(data.receiver);
+                viewModel.telephone(data.telephone);
+                viewModel.province(data.province);
+                viewModel.city(data.city);
+                viewModel.county(data.county);
+                viewModel.area(data.area);
+                viewModel.address(data.province + ' ' + data.city + ' ' + data.county);
+            }
+        });
+    }
+
+    viewModel.load = function () {
+        if('@ViewData["edit"]' == "1") {
+            viewModel.getAddressInfo('@ViewData["address_id"]');
+        }
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

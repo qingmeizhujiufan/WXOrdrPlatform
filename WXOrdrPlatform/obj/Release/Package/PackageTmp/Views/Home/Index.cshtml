@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+</style>
+<header class="mui-bar mui-bar-nav">
+    <h1 class="mui-title">预定服务</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper marginBottom60">
+    <div class="mui-scroll"></div>
+</div>
+<script>
+    var viewModel = {};
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.load = function () {
+        mui('.mui-scroll-wrapper').scroll();
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

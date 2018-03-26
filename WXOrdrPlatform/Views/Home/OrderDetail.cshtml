@@ -1,0 +1,166 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .address {
+        font-size: 14px;
+    }
+
+    .default-label {
+        padding: 2px 7px;
+        border-radius: 7px;
+        color: #fff;
+        background-color: #fc5a59;
+    }
+
+    .mui-btn-primary, input[type=submit] {
+        color: #fff;
+        border: 1px solid #fc5a59 !important;
+        background-color: #fc5a59 !important;
+    }
+
+    .mui-spinner {
+        vertical-align: -6px;
+    }
+
+    .mui-btn-block {
+        padding: 8px 0;
+    }
+
+    .wrap-icon {
+        padding: 50px 0 30px;
+        text-align: center;
+    }
+
+        .wrap-icon .mui-icon {
+            font-size: 30vw;
+            color: #fff;
+            border-radius: 50vw;
+        }
+
+            .wrap-icon .mui-icon.ok {
+                background-color: #fc5a59;
+            }
+
+            .wrap-icon .mui-icon.warning {
+                background-color: #74bd74;
+            }
+
+        .wrap-icon .result {
+            margin-top: 20px;
+            color: #333;
+        }
+
+    .btn-group {
+        text-align: center;
+    }
+
+        .btn-group span {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 5px 20px;
+            border: 0.05rem solid #fc5a59;
+            color: #fc5a59;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+            .btn-group span.scan-order {
+                background-color: #fc5a59;
+                color: #fff;
+            }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="click: clickItem.bind(null, '/Home/ReservationOrder/0')"></a>
+    <h1 class="mui-title">订单详情</h1>
+</header>
+<div class="mui-content marginBottom60">
+    <ul class="mui-list-unstyled device-base-info" style="margin-top: 10px;">
+        <li>
+            <span>订单状态</span>
+            <span data-bind="text: data().stateText" style="color: #fc5a59;"></span>
+        </li>
+        <li>
+            <span>订单编号</span>
+            <span data-bind="text: data().orderNo"></span>
+        </li>
+        <li>
+            <span>创建时间</span>
+            <span data-bind="text: data().create_time"></span>
+        </li>   
+    </ul>
+    <ul class="mui-list-unstyled device-base-info" style="margin-top: 10px;">
+        <li>
+            <span>预订人</span>
+            <span data-bind="text: data().userName"></span>
+        </li>
+        <li>
+            <span>预订人电话</span>
+            <span data-bind="text: data().telephone"></span>
+        </li>
+        <li>
+            <span>安装面积</span>
+            <span data-bind="text: data().installSize"></span>
+        </li>
+        <li>
+            <span>数量</span>
+            <span data-bind="text: data().installNum"></span>
+        </li>
+        <li>
+            <span>安装地址</span>
+            <span data-bind="text: data().province + data().city + data().county + data().area"></span>
+        </li>
+    </ul>
+    <ul class="mui-list-unstyled device-base-info" style="margin-top: 10px;">
+        <li>
+            <span>产品名称</span>
+            <span data-bind="text: data().productName"></span>
+        </li>
+        <li>
+            <span>价格</span>
+            <span data-bind="text: data().price + '元'"></span>
+        </li>
+        <li>
+            <span>支付金额</span>
+            <span data-bind="text: data().payMoney + '元'" style="color: #fc5a59;"></span>
+        </li>
+    </ul>
+</div>
+<script>
+    var viewModel = {
+        orderId: '@ViewData["id"]',
+        data: ko.observable({})
+    };
+
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getOrderInfo = function () {
+        var params = {};
+        params.orderId = viewModel.orderId;
+        Comget('/Order/getOrderInfo', params, function (data) {
+            var data = data.backData;
+            if (data.state == 0) {
+                data.stateText = '未支付';
+            } else if (data.state == 1) {
+                data.stateText = '已支付';
+            } else if (data.state == 2) {
+                data.stateText = '交易成功';
+            }else if (data.state == -1) {
+                data.stateText = '已取消';
+            }else {
+                data.stateText = '异常状态';
+            }
+            console.log('order === ', data);
+            viewModel.data(data);
+        });
+    }
+
+    viewModel.load = function () {
+        viewModel.getOrderInfo();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

@@ -1,0 +1,162 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+</style>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("We","Home")"></a>
+    <h1 class="mui-title">个人资料</h1>
+</header>
+<div class="mui-content">
+    <ul class="mui-table-view device-project-info">
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>姓名
+            <span class="mui-navigate-right" data-bind="text: userInfo().name ? userInfo().name : '未填写', click: updateName"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>性别
+            <span class="mui-navigate-right" data-bind="text: userInfo().sex ? userInfo().sex : '未填写', click: selectSex"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>电话
+            <span class="mui-navigate-right" data-bind="text: userInfo().telephone ? userInfo().telephone : '未填写', click: updateTelephone"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>出生年月
+            <span class="mui-navigate-right" data-bind="text: userInfo().birth ? userInfo().birth : '未填写', click: selectCheckDate"></span>
+        </li>
+        <li class="mui-table-view-cell hair-line-bottom">
+            <span></span>所在小区
+            <span class="mui-navigate-right" data-bind="text: userInfo().village ? userInfo().village : '未填写', click: updateVillage"></span>
+        </li>
+    </ul>
+</div>
+<script>
+    var viewModel = {
+        userInfo: ko.observable({})
+    };
+
+    viewModel.getUserInfo = function () {
+        var param = {};
+        param.openid = '@ViewData["openid"]';
+        Comget('/User/getUserInfo', param, function (data) {
+            viewModel.userInfo(data.backData);
+
+            loadingOut();
+        });
+    }
+
+    viewModel.updateUserInfo = function (openid, fieldName, fieldValue, callback) {
+        var param = {};
+        param.openid = openid;
+        param.fieldName = fieldName;
+        param.fieldValue = fieldValue;
+
+        loadingIn('正在更新...');
+        Compost('/User/updateUserInfo', JSON.stringify(param), function (data) {
+            if (typeof callback == 'function')
+                callback();
+            loadingOut();
+        });
+    }
+
+    //修改用户名
+    viewModel.updateName = function () {
+        var btnArray = ['取消', '确定'];
+        var name = viewModel.userInfo().name;
+        var data = viewModel.userInfo();
+        mui.prompt('请输入您的姓名：', name, '更新姓名', btnArray, function (e) {
+            if (e.index == 1) {
+                data.name = e.value;
+                viewModel.updateUserInfo('@ViewData["openid"]', 'name', e.value, function () {
+                    viewModel.userInfo(data);
+                    mui.toast('修改成功');
+                });
+            } else {
+            }
+        });
+    }
+
+    //修改用户性别
+    viewModel.selectSex = function () {
+        var sexPicker = new mui.PopPicker();
+        sexPicker.setData([{
+            value: 0,
+            text: '男'
+        }, {
+            value: 1,
+            text: '女'
+        }]);
+        sexPicker.show(function (selectItems) {
+            var data = viewModel.userInfo();
+            data.sex = selectItems[0].text;
+            viewModel.updateUserInfo('@ViewData["openid"]', 'sex', selectItems[0].text, function () {
+                viewModel.userInfo(data);
+                mui.toast('修改成功');
+            });
+            sexPicker.dispose();
+        });
+    }
+
+    //修改电话
+    viewModel.updateTelephone = function () {
+        var btnArray = ['取消', '确定'];
+        var telephone = viewModel.userInfo().telephone;
+        var data = viewModel.userInfo();
+        mui.prompt('请输入您的电话号码：', telephone, '更新电话号码', btnArray, function (e) {
+            if (e.index == 1) {
+                data.telephone = e.value;
+                viewModel.updateUserInfo('@ViewData["openid"]', 'telephone', e.value, function () {
+                    viewModel.userInfo(data);
+                    mui.toast('修改成功');
+                });
+            } else {
+            }
+        });
+    }
+
+    //修改所在小区
+    viewModel.updateVillage = function () {
+        var btnArray = ['取消', '确定'];
+        var village = viewModel.userInfo().village;
+        var data = viewModel.userInfo();
+        mui.prompt('请输入您的小区名称：', village, '更新小区名称', btnArray, function (e) {
+            if (e.index == 1) {
+                data.village = e.value;
+                viewModel.updateUserInfo('@ViewData["openid"]', 'village', e.value, function () {
+                    viewModel.userInfo(data);
+                    mui.toast('修改成功');
+                });
+            } else {
+            }
+        });
+    }
+
+    viewModel.selectCheckDate = function () {
+        //日期点击事件
+        var picker = new mui.DtPicker({
+            type: 'date',
+            value: '1970-01-01',
+            beginDate: new Date('1970-01-01'),
+            endDate: new Date()
+        });
+        picker.show(function (rs) {
+            var data = viewModel.userInfo();
+            data.birth = rs.value;
+            viewModel.updateUserInfo('@ViewData["openid"]', 'birth', rs.value, function () {
+                viewModel.userInfo(data);
+                mui.toast('修改成功');
+            });
+            picker.dispose();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getUserInfo();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

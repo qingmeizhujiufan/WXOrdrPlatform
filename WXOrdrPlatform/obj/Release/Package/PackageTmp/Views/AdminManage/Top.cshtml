@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="logo">后台管理系统</div>
+        </div>
+        <div class="span9">
+            <div class="row-fluid">
+                <div class="span9 nav-bar">
+                    <ul class="unstyled inline">
+                        @Html.Raw(@ViewData["lihtml"].ToString())
+                    </ul>
+                </div>
+                <div class="span3 pull-right" style="width: 200px;margin-right: 30px;">
+                    <div class="dropdown  text-right">
+                        <a id="drop_setting" style="width: 120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height: 60px;" class="dropdown-toggle" role="button" data-target="#" data-toggle="dropdown" href="#">
+                            你好，管理员<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="drop_setting" style="margin-left: 80px;">
+                            <li><a href="/AdminManage/LoginOut"><i class="icon-off"></i>&nbsp;退出</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

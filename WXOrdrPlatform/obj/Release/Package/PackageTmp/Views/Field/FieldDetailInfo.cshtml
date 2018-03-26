@@ -1,0 +1,244 @@
+﻿@{
+    ViewBag.Title = "添加球场信息";
+    Layout = "~/Views/Shared/_Layout_PC.cshtml";
+}
+<script src="~/Content/plugins/ueditor/ueditor.config.js"></script>
+<script src="~/Content/plugins/ueditor/ueditor.all.js"></script>
+<link href="~/Content/plugins/ueditor/themes/iframe.css" rel="stylesheet" />
+<script src="~/Content/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<style type="text/css">
+    .wrap-upload {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border: 1px solid #ddd;
+        text-align: center;
+        background-color: #f5f5f5;
+    }
+
+        .wrap-upload.field-content {
+            width: 400px;
+            height: 600px;
+        }
+
+        .wrap-upload i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 86px;
+            height: 86px;
+            margin-left: -43px;
+            margin-top: -43px;
+            font-size: 80px;
+            color: #cdcdcd;
+            z-index: 10;
+        }
+
+        .wrap-upload .upload {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        .wrap-upload.field-content .upload {
+            width: 400px;
+            height: 600px;
+        }
+
+        .wrap-upload img {
+            width: 100%;
+            height: 100%;
+        }
+</style>
+<!-- 页面头部  -->
+<div class="header">
+    @{Html.RenderAction("Top", "AdminManage", new { section = "2" });}
+</div>
+
+<!-- 页面主题内容  -->
+<div class="wrap-content">
+    <div class="side-left">
+        @{Html.RenderAction("Aside", "Field", new { menu_id = "1_1" });}
+    </div>
+    <div class="container side-content">
+        <div id="content" class="animated fadeInRight">
+            <div class="row-fluid">
+                <ul class="breadcrumb">
+                    <li><a href="/Field/FieldList">球场列表</a> <span class="divider">/</span></li>
+                    <li class="active">添加球场</li>
+                </ul>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="ibox-title">
+                        <h5>添加球场</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="control-group">
+                            <label class="control-label">球场图片：</label>
+                            <div class="controls">
+                                <div class="wrap-upload">
+                                    <img data-bind="attr: {'src': coverUrl}, css: {'hidden': coverUrl() == ''}" />
+                                    <i class="icon-picture" data-bind="css: {'hidden': coverUrl() != ''}"></i>
+                                    <input type="file" class="upload" data-bind="event: {change: fileChange}" accept="image/jpg,image/jpeg,image/png" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">球场名称：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: field_title" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">推广补贴价：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: field_subsidy_price" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">平日：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: field_common_sale" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">假日：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: field_specil_sale" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">球场优惠日：</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: field_preferential_day" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">球场详情信息图片：</label>
+                            <div class="controls">
+                                <div class="wrap-upload field-content">
+                                    <img data-bind="attr: {'src': field_content_url}, css: {'hidden': field_content_url() == ''}" />
+                                    <i class="icon-picture" data-bind="css: {'hidden': field_content_url() != ''}"></i>
+                                    <input type="file" class="upload" data-bind="event: {change: contentFileChange}" accept="image/jpg,image/jpeg,image/png" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <div class="controls">
+                                <button class="btn  pink" type="button" style="padding: 10px 40px;" data-bind="click: saveNews">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        coverUrl: ko.observable(''),
+        url: ko.observable(''),
+        field_subsidy_price: ko.observable(''),
+        field_title: ko.observable(''),
+        field_common_sale: ko.observable(''),
+        field_specil_sale: ko.observable(''),
+        field_preferential_day: ko.observable(''),
+        field_content_url: ko.observable(''),
+        content_url: ko.observable('')
+    };
+
+    viewModel.fileChange = function (data, obj) {
+        fileUpLoad(data, obj, function (src, url) {
+            viewModel.coverUrl(src);
+            viewModel.url(url);
+        });
+    }
+
+    viewModel.contentFileChange = function (data, obj) {
+        fileUpLoad(data, obj, function (src, url) {
+            viewModel.field_content_url(src);
+            viewModel.content_url(url);
+        });
+    }
+
+    viewModel.saveNews = function () {
+        var url = viewModel.url();
+        var content_url = viewModel.content_url();
+        var field_title = viewModel.field_title().trim();
+        var field_subsidy_price = viewModel.field_subsidy_price().trim();
+        var field_common_sale = viewModel.field_common_sale().trim();
+        var field_specil_sale = viewModel.field_specil_sale().trim();
+        var field_preferential_day = viewModel.field_preferential_day().trim();
+        if (url == '') {
+            alert('封面不能为空！');
+            return;
+        }
+        if (field_title == '') {
+            alert('球场名称不能为空！');
+            return;
+        }
+        if (field_common_sale == '') {
+            alert('普通活动不能为空！');
+            return;
+        }
+        if (content_url == '') {
+            alert('球场详情图片不能为空！');
+            return;
+        }
+
+        var param = {
+            id: '@ViewBag.id',
+            field_cover: url,
+            field_title: field_title,
+            field_subsidy_price: field_subsidy_price,
+            field_common_sale: field_common_sale,
+            field_specil_sale: field_specil_sale,
+            field_preferential_day: field_preferential_day,
+            field_content_url: content_url
+        };
+
+        $.post('/Field/updateField', param, function (data) {
+            if (data.success) {
+                alert('添加成功');
+                window.location.reload();
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    };
+
+    viewModel.load = function () {
+        var param = {
+            id: '@ViewBag.id'
+        };
+
+        $.post('/Field/fieldDetail', param, function (data) {
+            if (data.success) {
+                var field = strToJson(data.backData)[0];
+                viewModel.coverUrl(field.field_cover);
+                viewModel.url(field.field_cover);
+                viewModel.field_subsidy_price(field.field_subsidy_price);
+                viewModel.field_title(field.field_title);
+                viewModel.field_common_sale(field.field_common_sale);
+                viewModel.field_specil_sale(field.field_specil_sale);
+                viewModel.field_preferential_day(field.field_preferential_day);
+                viewModel.field_content_url(field.field_content_url);
+                viewModel.content_url(field.field_content_url);
+            } else {
+                alert(data.backMsg);
+            }
+        });
+    }
+
+ko.applyBindings(viewModel, $('#content')[0]);
+
+viewModel.load();
+</script>

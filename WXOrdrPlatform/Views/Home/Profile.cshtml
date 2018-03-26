@@ -1,0 +1,90 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-content {
+        background-color: #fff;
+    }
+
+    .brief {
+        margin-top: 20px;
+        padding: 0 25px;
+        line-height: 1.8;
+        text-indent: 30px;
+        color: #2c333f;
+        font-size: 14px;
+    }
+
+    .company-info {
+        width: 100%;
+        height: 54vw;
+        margin-top: 30px;
+        padding: 0 25px;
+        font-size: 14px;
+        line-height: 24px;
+        background-image: url(../../Images/profile-bottom.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+        .company-info .block {
+            margin-bottom: 15px;
+        }
+
+            .company-info .block .icon {
+                float: left;
+                margin-right: 10px;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+            }
+
+            .company-info .block .content {
+                overflow: hidden;
+            }
+
+    .address {
+        width: 16px;
+        height: 19.5px;
+        margin-top: 2px;
+        background-image: url(../../Images/address.png);
+    }
+
+    .telephone {
+        width: 16px;
+        height: 14.5px;
+        margin-top: 3px;
+        background-image: url(../../Images/telephone.png);
+    }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" href="@Url.Action("We","Home")"></a>
+    <h1 class="mui-title">公司简介</h1>
+</header>
+<div class="mui-content">
+    <div class="brief">
+        <div>武汉福星宏辉装饰工程有限公司，成立于2011年4月29日，创建人胡立峰先生，注册资金1000万元；公司现有员工300余人，是目前湖北地区规模最大、技术最强、质量最好、信誉最佳的专业公司。集产品开发、设计、制作、安装到售后服务为一体，实现计算机系统软件控制管理，完善的生产流水线，形成年生产节能门窗30万平方米的生产能力。</div>
+        <div style="margin-top: 20px;">不积跬步，无以至千里，不积细流，无以至江海。“宏辉”人就是靠从细微入手，从点滴做起的专业态度和敬业精神，由长江港湾中的一叶小舟发展成为在市场大潮中“宏辉”击水搏浪的诺亚方舟。</div>
+        <div style="margin-top: 20px;">公司正以骄傲的步伐迈进二十一世纪，相信在公司领导人胡立峰的决策指挥下，本着“以人为本”的人资理念，“以诚为本”的经营理念引进大批专业人才，采用科学的管理模式，应用人才、质量、竞争市场。利用管理求得发展，力争创建家喻户晓的“节能门窗，首选宏辉”。</div>
+        <div style="margin-top: 20px;">雄关漫道真如铁，而今迈步从头越。“宏辉”人本着“以人为本”的人资理念，“以诚为本”的经营理念，更好的服务于大众，回报社会！</div>
+    </div>
+    <div class="company-info">
+        <div class="block">
+            <div class="icon address"></div>
+            <div class="content">公司地址：武汉市黄陂区华中企业城军事管制区八一农场（捷豪仕沙发北130米）</div>
+        </div>
+        <div class="block">
+            <div class="icon telephone"></div>
+            <div class="content">公司电话：027-61596768</div>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+    };
+
+    viewModel.load = function () {
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

@@ -1,0 +1,213 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    body, .mui-content {
+        background-color: #fff;
+    }
+
+    .content {
+        position: relative;
+    }
+
+    .banner {
+        width: 100vw;
+        height: 45.33vw;
+    }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .title {
+        position: absolute;
+        top: 8vw;
+        left: 20px;
+        color: #fff;
+        font-size: 22px;
+    }
+
+    .wrap-input {
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        top: 18vw;
+        background-color: #fff;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+        .wrap-input .mui-icon {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            color: #999;
+        }
+
+        .wrap-input input {
+            width: 100%;
+            height: 35px;
+            margin-bottom: 0;
+            padding-left: 40px;
+            border: none;
+            font-size: 14px;
+        }
+
+    .service {
+        position: absolute;
+        top: 30vw;
+        left: 20px;
+        right: 20px;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 4px 4px 6px 0 rgba(214, 203, 203, 0.4);
+    }
+
+    .service-box {
+        display: flex;
+        text-align: center;
+    }
+
+        .service-box .item {
+            flex: 1;
+        }
+
+            .service-box .item img {
+                width: calc((100vw - 60px)/3*0.35);
+            }
+
+            .service-box .item div {
+                font-size: 14px;
+                color: #333;
+            }
+
+    .service-list {
+        margin-top: 12vw;
+    }
+
+        .service-list .service-name {
+            margin-left: 5px;
+        }
+
+        .service-list .img-list {
+            display: flex;
+            text-align: center;
+        }
+
+            .service-list .img-list .item {
+                flex: 1;
+                height: 25vw;
+                padding: 10px 5px;
+            }
+
+                .service-list .img-list .item img {
+                    width: 100%;
+                    height: 100%;
+                }
+
+    .hair-line-bottom:after {
+        left: -15px;
+        width: auto;
+    }
+</style>
+<div class="mui-content marginTop0 marginBottom60">
+    <div class="content">
+        <div class="banner">
+            <img src="~/Images/banner.png" />
+        </div>
+        <span class="title">搜服务</span>
+        <div class="wrap-input">
+            <span class="mui-icon mui-icon-search"></span>
+            <input type="text" placeholder="搜索你想要的服务" />
+        </div>
+        <div class="service">
+            <div class="service-box">
+                <div class="item">
+                    <a href="/Home/ProductList">
+                        <img src="~/Images/home_1.png" />
+                        <div>门窗预定</div>
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="tel: 13707176777">
+                        <img src="~/Images/home_2.png" />
+                        <div>电话预定</div>
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="/Home/Room3D">
+                        <img src="~/Images/home_3.png" />
+                        <div>3D体验</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="service-list">
+            <ul class="mui-table-view" data-bind="foreach: productList">
+                <li class="mui-table-view-cell hair-line-bottom" data-bind="click: $parent.clickItem.bind(null, '/Home/ProductDetail/' + id)">
+                    <div class="service-name" data-bind="text: $data.name">高效封装阳台服务</div>
+                    <div class="img-list" data-bind="foreach: $data.fileList">
+                        <div class="item">
+                            <img data-bind="attr: {src: $data.filePath}" />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        productList: ko.observableArray([])
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.queryList = function () {
+        Comget('/Product/getProductList', null, function (data) {
+            var productList = strToJson(data.backData);
+            productList.map(function (item, index) {
+                var coverAttaches = item.coverAttaches;
+                item.fileList = [];
+                if (coverAttaches === '') {
+                    for (var i = 0; i < 3; i++) {
+                        item.fileList.push({
+                            index: i + 1,
+                            filePath: '/Images/test/t_1.png'
+                        });
+                    }
+                } else {
+                    var id_array = coverAttaches.split(',');
+                    for (var i = 0; i < 3; i++) {
+                        if (id_array.length >= 3) {
+                            item.fileList.push({
+                                index: i + 1,
+                                filePath: '/UpLoadFile/' + coverAttaches.split(',')[i] + '.png'
+                            });
+                        } else {
+
+                            item.fileList.push({
+                                index: i + 1,
+                                filePath: (i <= id_array.length - 1) ? ('/UpLoadFile/' + coverAttaches.split(',')[i] + '.png') : ('/Images/test/t_1.png')
+                            });
+                        }
+                    }
+                }
+            });
+            viewModel.productList(productList);
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.queryList();
+    }
+
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

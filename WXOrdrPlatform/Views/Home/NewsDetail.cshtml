@@ -1,0 +1,88 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .mui-content {
+        margin-top: 40px;
+        background-color: #fff;
+    }
+
+    .title {
+        margin: 0;
+        padding: 15px;
+        text-align: left;
+    }
+
+        .title h4 {
+            margin: 0;
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .title p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+    .content {
+        padding: 10px 15px 30px;
+        overflow-x: hidden;
+    }
+
+        .content * {
+            color: #333 !important;
+            line-height: 2;
+            font-size: 16px;
+        }
+
+        .content img {
+            width: 100% !important;
+            height: auto;
+            max-height: 100% !important;
+        }
+</style>
+<header class="mui-bar mui-bar-nav hair-line-bottom">
+    <a class="mui-icon mui-icon-arrowleft mui-pull-left" data-bind="click: clickItem.bind(null, '/Home/CaseShow/2')"></a>
+    <h1 class="mui-title">新闻详情</h1>
+</header>
+<div class="mui-content marginTop0">
+    <div class="title">
+        <h4 data-bind="text: data().news_title"></h4>
+        <p data-bind="text: data().create_time"></p>
+    </div>
+    <div class="brief"></div>
+    <div class="content">
+        <div data-bind="html: data().news_content"></div>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        data: ko.observable({})
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getNewsDetail = function () {
+        var params = {};
+        params.newsId = '@ViewData["newsId"]';
+
+        Comget('/News/getNewsDetail', params, function (data) {
+            var data = data.backData;
+            data.news_cover = '/UpLoadFile/' + data.news_cover + '.png';
+            data.news_content = decodeURIComponent(data.news_content);
+            data.create_time = data.create_time.substring(0, 10);
+            viewModel.data(data);
+
+            loadingOut();
+        });
+    }
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getNewsDetail();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

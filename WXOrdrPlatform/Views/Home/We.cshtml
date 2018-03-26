@@ -1,0 +1,218 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .we {
+        margin-top: 0;
+    }
+
+    .head-img {
+        position: relative;
+        height: 32.5333vw;
+        width: 100%;
+        margin-bottom: 30vw;
+        padding: 20vw 10px 10px;
+        background-color: #fc5a59;
+        background-image: url(../../Images/user_bg.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        text-align: center;
+    }
+
+        .head-img .box {
+            position: relative;
+            height: 35vw;
+            background-color: #fff;
+            border-radius: 7px;
+        }
+
+        .head-img .my-img {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4em;
+            height: 4em;
+            margin-left: -2em;
+            margin-top: -2em;
+            border-radius: 4em;
+            border: 2px solid #FFF;
+            box-shadow: inset 0 1px 8px rgba(0,0,0,0.2);
+            display: inline-block;
+            overflow: hidden;
+            background-size: cover;
+        }
+
+        .head-img p {
+            position: absolute;
+            top: 9vw;
+            width: 100%;
+            font-size: 3.5vw;
+            color: #333;
+        }
+
+        .head-img .area {
+            position: absolute;
+            top: 14vw;
+            width: 100%;
+            font-size: 2.5vw;
+            color: #999;
+        }
+
+        .head-img .box .order {
+            display: flex;
+            padding-top: 21vw;
+        }
+
+            .head-img .box .order .item {
+                flex: 1;
+            }
+
+                .head-img .box .order .item .num {
+                    color: #333;
+                    font-size: 18px;
+                }
+
+                .head-img .box .order .item .title {
+                    margin-top: 1vw;
+                    color: #787878;
+                    font-size: 12px;
+                }
+
+    .margintop15 {
+        margin-top: 15px;
+    }
+
+    .list-box {
+        margin-bottom: 10px;
+        padding: 0 10px;
+    }
+
+        .list-box .mui-table-view {
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+            .list-box .mui-table-view:before,
+            .list-box .mui-table-view:after {
+                height: 0;
+            }
+
+            .list-box .mui-table-view .mui-table-view-cell {
+                padding: 13px 15px;
+            }
+
+                .list-box .mui-table-view .mui-table-view-cell.hair-line-bottom:after {
+                    left: 45px;
+                }
+
+    .mui-table-view-cell > a:not(.mui-btn) {
+        margin: -13px -15px;
+    }
+
+    .list-box .iconfont {
+        margin-right: 10px;
+        font-size: 18px;
+        color: #fc5a59;
+        vertical-align: -1px;
+    }
+</style>
+<div class="mui-content we">
+    <div class="head-img">
+        <div class="box">
+            <a href="@Url.Action("PersonalInfo", "Home")">
+                <span class="my-img" style="background-image:url(@ViewData["user_photo_url"])"></span>
+            </a>
+            <p>@ViewData["user_nickname"]</p>
+            <div class="area">
+                <span>@ViewData["province"]</span>
+                <span>·</span>
+                <span>@ViewData["city"]</span>
+            </div>
+            <ul class="mui-list-unstyled order">
+                <li class="item" data-bind="click: clickItem.bind(null, '/Home/ReservationOrder/1')">
+                    <div class="num" data-bind="text: unpaid"></div>
+                    <div class="title">待支付</div>
+                </li>
+                <li class="item" data-bind="click: clickItem.bind(null, '/Home/ReservationOrder/2')">
+                    <div class="num" data-bind="text: paid"></div>
+                    <div class="title">已支付</div>
+                </li>
+                <li class="item" data-bind="click: clickItem.bind(null, '/Home/ReservationOrder/3')">
+                    <div class="num" data-bind="text: completed"></div>
+                    <div class="title">已完成</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="list-box">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell hair-line-bottom">
+                <a href="@Url.Action("PersonalInfo", "Home")" class="mui-navigate-right">
+                    <i class="iconfont icon-gerenziliao"></i>个人资料
+                </a>
+            </li>
+            <li class="mui-table-view-cell hair-line-bottom">
+                <a href="/Home/ReservationOrder/0" class="mui-navigate-right">
+                    <i class="iconfont icon-dingdan"></i>我的预约订单
+                </a>
+            </li>
+            <li class="mui-table-view-cell hair-line-bottom">
+                <a href="@Url.Action("MyAddress", "Home")" class="mui-navigate-right">
+                    <i class="iconfont icon-wodedizhi"></i>我的地址
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="list-box">
+        <ul class="mui-table-view" style="margin-top:1em;">
+            <li class="mui-table-view-cell hair-line-bottom">
+                <a href="@Url.Action("ContactUs", "Home")" class="mui-navigate-right">
+                    <i class="iconfont icon-kefu"></i>联系客服
+                </a>
+            </li>
+            <li class="mui-table-view-cell">
+                <a href="@Url.Action("Profile", "Home")" class="mui-navigate-right">
+                    <i class="iconfont icon-guanwang"></i>官网/关于
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    var viewModel = {
+        userId: '',
+        userName: ko.observable(''),
+        unpaid: ko.observable(0),
+        paid: ko.observable(0),
+        completed: ko.observable(0)
+    };
+    viewModel.clickItem = function (param) {
+        window.location.href = param;
+    }
+
+    viewModel.getUserOrderList = function () {
+        var params = {};
+        params.userId = '@ViewData["userId"]';
+        Comget('/Home/getUserOrderList', params, function (data) {
+            var data = data.backData;
+            var unpaid = 0, paid = 0, completed = 0;
+            data.map(function (item, index) {
+                if (item.state == 0) unpaid++;
+                if (item.state == 1) paid++;
+                if (item.state == 2) completed++;
+            });
+            viewModel.unpaid(unpaid);
+            viewModel.paid(paid);
+            viewModel.completed(completed);
+            loadingOut();
+        });
+    };
+
+    viewModel.load = function () {
+        loadingIn();
+        viewModel.getUserOrderList();
+    }
+    ko.applyBindings(viewModel, $('#content')[0]);
+
+    viewModel.load();
+</script>

@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="format-detection" content="telephone=no">
+    <title>福星宏辉微信预定平台</title>
+    <link href="~/Content/css/mui.min.css" rel="stylesheet" />
+    <link href="~/Content/css/animate.css" rel="stylesheet" />
+    <link href="~/Content/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="~/Content/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="~/Dist/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/Content/css/iconfont.css" rel="stylesheet" />
+    <link href="~/Content/css/index.css" rel="stylesheet" />
+    <script src="~/Content/js/mui.js"></script>
+    <script src="~/Content/js/mui.picker.min.js"></script>
+    <script src="~/Content/js/mui.poppicker.js"></script>
+    <script src="~/Content/js/mui.previewimage.js"></script>
+    <script src="~/Content/js/mui.zoom.js"></script>
+    <script src="~/Content/plugins/knockout/knockout.js"></script>
+    <script src="~/Dist/js/jquery-2.1.1.min.js"></script>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+    <script src="~/Content/js/public.js"></script>
+    <script src="~/Content/js/validate.js"></script>
+    <style type="text/css">
+        .footer-nav a span {
+            margin-top: 6px;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+        }
+
+        .index_1 {
+            background: url('../../Images/index_1.png');   
+        }
+
+        .footer-nav ul li.active .index_1 {
+            background: url('../../Images/index_1_active.png');   
+        }
+
+        .index_2 {
+            background: url('../../Images/index_2.png');   
+        }
+
+        .footer-nav ul li.active .index_2 {
+            background: url('../../Images/index_2_active.png');   
+        }
+
+        .index_3 {
+            background: url('../../Images/index_3.png');   
+        }
+
+        .footer-nav ul li.active .index_3 {
+            background: url('../../Images/index_3_active.png');   
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        @RenderBody()
+        <footer class="footer-nav">
+            <ul class="mui-list-unstyled">
+                <li>
+                    <a onclick="goTo('/Home/Index')">
+                        <span class="index_1"></span>
+                        <p>预定服务</p>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="goTo('/Home/CaseShow')">
+                        <span class="index_2"></span>
+                        <p>案例展示</p>
+                    </a>
+                </li>           
+                <li>
+                    <a onclick="goTo('/Home/We')">
+                        <span class="index_3"></span>
+                        <p>个人中心</p>
+                    </a>
+                </li>
+            </ul>
+        </footer>
+    </div>
+    <script>
+        $(function () {
+            var router = [
+                [
+                    '/Home/Index'
+                ], [
+                    '/Home/CaseShow'
+                ], [
+                    '/Home/We'
+                ]
+            ];
+
+            var url = document.location.pathname;
+            var index = (function () {
+                for (var i = 0; i < router.length; i++) {
+                    for (var j = 0; j < router[i].length; j++) {                   
+                        if (url.toLowerCase().indexOf(router[i][j].toLowerCase()) > -1)
+                            return i + 1;
+                    }
+                }
+            })() || 0;
+            if (url.split('/').length <= 2)
+                index = 1;
+            console.log('index ===', index);
+            if (index == 0) {
+                $('.footer-nav').hide();
+                return;
+            }
+            $('.footer-nav ul').show().children(':nth-child(' + index + ')').addClass('active');
+        });
+
+        function goTo(param) {
+            window.location.href = param;
+        }
+    </script>
+</body>
+</html>
