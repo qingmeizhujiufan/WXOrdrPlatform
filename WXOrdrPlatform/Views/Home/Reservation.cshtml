@@ -69,21 +69,17 @@
     </ul>
     <ul class="mui-table-view device-project-info" style="margin-top: 15px;">
         <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectSize">
-            <span></span>安装面积
+            <span></span>预约安装面积
             <span class="mui-navigate-right" data-bind="text: size() == 0 ? '请选择' : (size() + '平方')"></span>
         </li>
-        <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectNum">
-            <span></span>安装数量
-            <span class="mui-navigate-right" data-bind="text: amount() == 0 ? '请选择' : amount"></span>
-        </li>
         <li class="mui-table-view-cell hair-line-bottom" data-bind="click: selectDate">
-            <span></span>安装时间
+            <span></span>预约安装时间
             <span class="mui-navigate-right" data-bind="text: date() == '' ? '请选择' : date"></span>
         </li>
     </ul>
     <ul class="mui-table-view device-project-info" style="margin-top: 15px;">
         <li class="mui-table-view-cell">
-            <span></span>总计
+            <span></span>预付定金
             <span>
                 <span data-bind="text: payMoney" style="color: #fc5a59;"></span>
                 <span>元</span>
@@ -99,7 +95,6 @@
         name: ko.observable(''),
         telephone: ko.observable(''),
         size: ko.observable(0),
-        amount: ko.observable(1),
         date: ko.observable(''),
         address: ko.observable({}),
         payMoney: ko.observable(0.00),
@@ -141,7 +136,6 @@
         var userName = viewModel.name().trim();
         var telephone = viewModel.telephone().trim();
         var installSize = viewModel.size();
-        var installNum = viewModel.amount();
         var installDate = viewModel.date();
         var addressId = viewModel.address().id;
         var payMoney = viewModel.payMoney();
@@ -155,11 +149,11 @@
             return;
         }
         if (installSize == 0) {
-            mui.toast('请选择安装面积');
+            mui.toast('请选择预约安装面积');
             return;
         }
         if (installDate == '') {
-            mui.toast('请选择安装时间');
+            mui.toast('请选择预约安装时间');
             return;
         }
 
@@ -200,22 +194,6 @@
         });
     }
 
-    viewModel.selectNum = function () {
-        var picker = new mui.PopPicker();
-        var list = [];
-        for (var i = 1; i <= 100; i++) {
-            list.push({
-                value: i,
-                text: i.toString()
-            });
-        }
-        picker.setData(list);
-        picker.show(function (items) {
-            viewModel.amount(items[0].value);
-            viewModel.payMoney((viewModel.s_pay * items[0].value).toFixed(2));
-        });
-    }
-
     viewModel.selectDate = function () {
         //日期点击事件
         var picker = new mui.DtPicker({
@@ -243,7 +221,6 @@
         Comget('/Product/getProductInfo', params, function (data) {
             var data = data.backData;
             viewModel.s_pay = parseFloat(data.price);
-            viewModel.payMoney((viewModel.s_pay * viewModel.amount()).toFixed(2));
 
             loadingOut();
         });

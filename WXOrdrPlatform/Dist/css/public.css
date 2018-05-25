@@ -162,7 +162,23 @@ textarea {
 }
 
 .font-green {
-    color: #24CBE5;
+    color: #3cc051;
+}
+
+.font-blue {
+    color: #57b5e3;
+}
+
+.font-yellow {
+    color: #fcb322;
+}
+
+.font-black {
+    color: #000;
+}
+
+.font-red {
+    color: #ed4e2a;
 }
 
 .marginTop5 {
@@ -247,13 +263,13 @@ textarea {
         top: 60px;
         left: 0;
         bottom: 0;
-        width: 240px;
+        width: 200px;
         background-color: #373d47;
         z-index: 101;
     }
 
     .wrap-content .side-content {
-        padding: 90px 30px 50px 270px;
+        padding: 90px 30px 50px 230px;
     }
 
 .nav-bar {
@@ -307,7 +323,7 @@ textarea {
             }
 
 .logo {
-    width: 240px;
+    width: 200px;
     padding-left: 15px;
     line-height: 60px;
     color: #fff;
@@ -418,7 +434,7 @@ table {
 
     .aside-bar li a {
         display: block;
-        line-height: 50px;
+        line-height: 45px;
         padding-left: 15px;
         color: #979da7;
         transition: all ease-in-out .25s;
@@ -429,7 +445,7 @@ table {
     }
 
     .aside-bar li:not(.title) a {
-        padding-left: 55px;
+        padding-left: 48px;
         line-height: 40px;
     }
 
@@ -632,29 +648,6 @@ table {
     font-size: 12px;
     color: #2C3E50;
 }
-
-#choose_goods_list {
-    width: 350px;
-    margin-left: 180px;
-    margin-bottom: 20px;
-}
-
-    #choose_goods_list table {
-        margin-bottom: 0;
-        border: 1px solid #ddd;
-    }
-
-    #choose_goods_list thead {
-        background-color: #f5f5f5;
-    }
-
-    #choose_goods_list tbody tr td:first-child {
-        width: 300px;
-    }
-
-    #choose_goods_list tbody tr td:last-child {
-        width: 50px;
-    }
 
 /* 提示语 */
 .validate-tip {

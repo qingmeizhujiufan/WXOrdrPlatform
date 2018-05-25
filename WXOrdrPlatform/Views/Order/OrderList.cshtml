@@ -59,7 +59,7 @@
                                             <td data-bind="text: $data.province + $data.city + $data.county + $data.area"></td>
                                             <td data-bind="text: $data.installDate"></td>
                                             <td data-bind="text: $data.payMoney"></td>
-                                            <td data-bind="text: $data.stateText, attr: {'class': $data.stateClass}" style="color: #fff;"></td>
+                                            <td data-bind="text: $data.stateText, attr: {'class': $data.stateClass}"></td>
                                             <td>
                                                 <a style="margin-right: 20px;" data-bind="attr: {href: '/Order/OrderDetail/' + $data.id}">详情</a>
                                                 <a data-bind="click: $parent.finishOrder">完成订单</a>
@@ -94,19 +94,19 @@
                     var state = item.state;
                     if(state == 0){
                         item.stateText = '待支付';
-                        item.stateClass = 'label-warning';
+                        item.stateClass = 'font-yellow';
                     } else if (state == 1) {
                         item.stateText = '已支付';
-                        item.stateClass = 'label-success';
+                        item.stateClass = 'font-green';
                     } else if (state == 2) {
                         item.stateText = '已完成';
-                        item.stateClass = 'label-info';
+                        item.stateClass = 'font-blue';
                     } else if (state == -1) {
                         item.stateText = '已取消';
-                        item.stateClass = 'label-inverse';
+                        item.stateClass = 'font-black';
                     } else {
                         item.stateText = '异常状态';
-                        item.stateClass = 'label-important';
+                        item.stateClass = 'font-red';
                     }                
                 });
                 console.log('orderList == ', orderList);
