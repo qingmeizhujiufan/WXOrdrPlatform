@@ -93,34 +93,27 @@ namespace WXOrdrPlatform.Controllers
         #region 接口
 
         //单附件上传
-        public JsonResult UpLoadImage(file f)
+        public JsonResult UpLoadImage(HttpPostedFileBase file)
         {
             var res = new JsonResult();
             res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
 
-            string fileName = f.fileName;
-            string fileContent = f.fileContent;
-            string fileSize = f.fileSize;
-            string filePath = string.Empty;
-
             try
             {
-                byte[] arr = Convert.FromBase64String(fileContent);
-                MemoryStream ms = new MemoryStream(arr);
-                Bitmap bmp = new Bitmap(ms);
+                string fileName = file.FileName;
+                string filePath = string.Empty;
                 string id = Guid.NewGuid().ToString();
                 filePath = "/UpLoadFile/" + id + ".png";
                 string path = Server.MapPath(filePath);
-                bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
-                ms.Close();
+                file.SaveAs(path);
 
                 res.Data = new
                 {
                     success = true,
-                    backData = new
+                    data = new
                     {
                         id = id,
-                        filePath = filePath
+                        link = filePath
                     }
                 };
                 return res;
