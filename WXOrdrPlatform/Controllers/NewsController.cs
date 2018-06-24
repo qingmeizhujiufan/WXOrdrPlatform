@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WXOrdrPlatform.Core;
 using WXOrdrPlatform.Models;
 
 namespace WXOrdrPlatform.Controllers
@@ -13,52 +14,6 @@ namespace WXOrdrPlatform.Controllers
     {
         //
         // GET: /News/
-
-        public ActionResult NewsList()
-        {
-            return View();
-        }
-
-
-
-        public ActionResult AddNews()
-        {
-            return View();
-        }
-        
-        public ActionResult NewsDetailInfo(string id)
-        {
-            ViewBag.id = id;
-            return View();
-        }
-
-        public ActionResult EditNews(string id)
-        {
-            ViewBag.id = id;
-            return View();
-        }
-
-        public ActionResult CaseList()
-        {
-            return View();
-        }
-
-        public ActionResult AddCase()
-        {
-            return View();
-        }
-
-        public ActionResult CaseDetailInfo(string id)
-        {
-            ViewBag.id = id;
-            return View();
-        }
-
-        public ActionResult EditCase(string id)
-        {
-            ViewBag.id = id;
-            return View();
-        }
 
         #region 接口
         //获取新闻列表
@@ -156,6 +111,7 @@ namespace WXOrdrPlatform.Controllers
         }
 
         //新增或者修改新闻
+        [SupportFilter]
         public JsonResult saveAPNews(news n)
         {
             var res = new JsonResult();
@@ -212,6 +168,7 @@ namespace WXOrdrPlatform.Controllers
         }
 
         //删除新闻
+        [SupportFilter]
         public JsonResult delNews(string newsId)
         {
             var res = new JsonResult();
