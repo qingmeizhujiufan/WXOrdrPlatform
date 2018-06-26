@@ -15,7 +15,7 @@ namespace BLL
         }
 
         //获取产品列表信息
-        public DataTable GetProductList(string conditionValue)
+        public DataTable GetProductList()
         {
             string strSql = @"select    id,
                                         ISNULL(name, '') as name,
@@ -30,9 +30,8 @@ namespace BLL
                                         ISNULL(coverAttaches, '') as coverAttaches,
                                         CONVERT(varchar(19) , create_time, 120 ) as create_time
                                         from dbo.wxop_product
-                                        where name like '%{0}%'
                                         order by create_time desc";
-            strSql = string.Format(strSql, conditionValue);
+            strSql = string.Format(strSql);
             DataTable dt = DBHelper.SqlHelper.GetDataTable(strSql);
             return dt;
         }
