@@ -10,29 +10,36 @@ namespace BLL
     public class Order
     {
         //获取订单列表信息
-        public DataTable GetOrderList(string orderNo)
+        public DataTable GetOrderList()
         {
             string strSql = @"select    o.id,
                                         ISNULL(o.orderNo, '') as orderNo,
                                         o.productId,
+                                        p.name as productName,
+                                        p.coverAttaches,
+                                        p.price,
                                         o.userId,
                                         ISNULL(o.userName, '') as userName,
                                         ISNULL(o.telephone, '') as telephone,
+                                        a.id,
+                                        o.addressId,
                                         a.province,
                                         a.city,
                                         a.county,
                                         a.area,
                                         CONVERT(varchar(19) , o.installDate, 120 ) as installDate,
                                         ISNULL(o.installSize, '') as installSize,
+                                        o.installNum,
                                         o.payMoney,
                                         o.state,
                                         CONVERT(varchar(19) , o.create_time, 120 ) as create_time
                                         from dbo.wxop_order o
                                         left join dbo.wxop_address a
                                         on o.addressId = a.id
-                                        where o.orderNo like '%{0}%'
+                                        left join dbo.wxop_product p
+                                        on o.productId = p.id
                                         order by o.create_time desc";
-            strSql = string.Format(strSql, orderNo);
+            strSql = string.Format(strSql);
             DataTable dt = DBHelper.SqlHelper.GetDataTable(strSql);
             return dt;
         }
