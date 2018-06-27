@@ -14,9 +14,9 @@ namespace WXOrdrPlatform.Controllers
 {
     public class NewsController : ApiController
     {
-        #region 获取所有商品
+        #region 获取所有新闻
         /// <summary>  
-        /// 获取所有商品 
+        /// 获取所有新闻 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -80,9 +80,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 获取所有商品
+        #region 获取新闻详情
         /// <summary>  
-        /// 获取所有商品 
+        /// 获取新闻详情 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -129,9 +129,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 保存商品
+        #region 保存新闻
         /// <summary>  
-        /// 保存商品 
+        /// 保存新闻 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -197,20 +197,20 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 保存商品
+        #region 删除新闻
         /// <summary>  
-        /// 保存商品 
+        /// 删除新闻 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
         [SupportFilter]
         [AcceptVerbs("OPTIONS", "POST")]
-        public HttpResponseMessage delNews(string newsId)
+        public HttpResponseMessage delNews(dynamic d)
         {
             Object data;
-
+            string id = d.newsId;
             BLL.News news = new BLL.News();
-            bool flag = news.DelNews(newsId);
+            bool flag = news.DelNews(id);
             if (flag)
             {
                 data = new
@@ -236,9 +236,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 获取所有商品
+        #region 获取所有案例
         /// <summary>  
-        /// 获取所有商品 
+        /// 获取所有案例 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -292,9 +292,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 获取所有商品
+        #region 获取案例详情
         /// <summary>  
-        /// 获取所有商品 
+        /// 获取案例详情 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -339,9 +339,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 保存商品
+        #region 保存案例
         /// <summary>  
-        /// 保存商品 
+        /// 保存案例 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -405,9 +405,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 保存商品
+        #region 删除案例
         /// <summary>  
-        /// 保存商品 
+        /// 删除案例 
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
