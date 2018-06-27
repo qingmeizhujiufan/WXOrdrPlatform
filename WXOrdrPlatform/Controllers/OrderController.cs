@@ -2,70 +2,94 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Script.Serialization;
 using WXOrdrPlatform.Models;
+using WXOrdrPlatform.Core;
 
 namespace WXOrdrPlatform.Controllers
 {
-    public class OrderController : Base
+    public class OrderController : ApiController
     {
-        //
-        // GET: /Order/
-
-        public ActionResult Index()
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getOrderList()
         {
-            return View();
-        }
-
-        public ActionResult OrderList()
-        {
-            return View();
-        }
-
-        public ActionResult OrderDetail(string id)
-        {
-            ViewData["orderId"] = id;
-
-            return View();
-        }
-
-        #region 接口
-        public JsonResult getOrderList(string orderNo)
-        {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            object data;
             try
             {
                 BLL.Order order = new BLL.Order();
-                DataTable dt = order.GetOrderList(orderNo);
-                res.Data = new
+                DataTable dt = order.GetOrderList();
+                List<order> list = new List<order>();
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    success = true,
-                    backData = CommonTool.JsonHelper.DataTableToJSON(dt)
+                    order o = new order();
+                    o.id = dt.Rows[i]["id"].ToString();
+                    o.orderNo = dt.Rows[i]["orderNo"].ToString();
+                    o.productId = dt.Rows[i]["productId"].ToString();
+                    o.productName = dt.Rows[i]["productName"].ToString();
+                    o.price = dt.Rows[i]["price"].ToString();
+                    o.userName = dt.Rows[i]["userName"].ToString();
+                    o.telephone = dt.Rows[i]["telephone"].ToString();
+                    o.addressId = dt.Rows[i]["addressId"].ToString();
+                    o.installDate = dt.Rows[i]["installDate"].ToString();
+                    o.installSize = Convert.ToSingle(dt.Rows[i]["installSize"].ToString());
+                    o.installNum = Convert.ToInt32(dt.Rows[i]["installNum"].ToString());
+                    o.payMoney = Convert.ToSingle(dt.Rows[i]["payMoney"].ToString());
+                    o.state = Convert.ToInt32(dt.Rows[i]["state"].ToString());
+                    o.create_time = dt.Rows[i]["create_time"].ToString();
 
-                };
+                    list.Add(o);
+                }
+
+                    data = new
+                    {
+                        success = true,
+                        backData = list
+
+                    };
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult getOrderInfo(string orderId)
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getOrderInfo(string orderId)
         {
-            var res = new JsonResult();
+            object data;
             BLL.Order order = new BLL.Order();
             DataTable dt = order.GetOrderBaseInfo(orderId);
             if (dt.Rows.Count == 1)
             {
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = new
@@ -94,20 +118,33 @@ namespace WXOrdrPlatform.Controllers
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单不存在"
                 };
             }
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult submitOrder(order or)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage submitOrder(order or)
         {
-            var res = new JsonResult();
+            object data;
             string productId = or.productId;
             string userId = or.userId;
             string userName = or.userName;
@@ -122,7 +159,7 @@ namespace WXOrdrPlatform.Controllers
             string id = order.SubmitOrder(productId, userId, userName, telephone, addressId, installDate, installSize, installNum, payMoney);
             if (id != "")
             {
-                res.Data = new
+                data = new
                 {
                     success = true,
                     id = id
@@ -130,168 +167,245 @@ namespace WXOrdrPlatform.Controllers
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单生成失败"
                 };
             }
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult payOrder(string orderId)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage payOrder(string orderId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
+            object data;
 
             if (string.IsNullOrEmpty(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单号不能为空"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
 
             BLL.Order order = new BLL.Order();
             if (!order.checkOrderIsExist(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单不存在"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
             int flag = order.PayOrder(orderId);
             if (flag > 0)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单回写失败，请于商家联系"
                 };
-            }       
+            }
 
-            return res;
+            JavaScriptSerializer _serializer = new JavaScriptSerializer();
+            string _json = _serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(_json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult completeOrder(string orderId)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage completeOrder(string orderId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
+            object data;
 
             if (string.IsNullOrEmpty(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单号不能为空"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
 
             BLL.Order order = new BLL.Order();
             if (!order.checkOrderIsExist(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单不存在"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
             int flag = order.CompleteOrder(orderId);
             if (flag > 0)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单完成失败，请重试"
                 };
             }
 
-            return res;
+            JavaScriptSerializer _serializer = new JavaScriptSerializer();
+            string _json = _serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(_json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult delOrder(string orderId)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage delOrder(string orderId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
+            object data;
 
             if (string.IsNullOrEmpty(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单号不能为空"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
 
             BLL.Order order = new BLL.Order();
             if (!order.checkOrderIsExist(orderId))
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "订单不存在"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
             int flag = order.DelOrder(orderId);
             if (flag == 40003)
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "当前状态为非未支付状态，不可取消订单"
                 };
 
-                return res;
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                string json = serializer.Serialize(data);
+                return new HttpResponseMessage
+                {
+                    Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                };
             }
             if (flag > 0)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "取消订单失败，请重试"
                 };
             }
 
-            return res;
+            JavaScriptSerializer _serializer = new JavaScriptSerializer();
+            string _json = _serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(_json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
-
         #endregion
 
     }

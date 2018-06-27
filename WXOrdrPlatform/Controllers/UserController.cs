@@ -2,56 +2,88 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Script.Serialization;
+using WXOrdrPlatform.Models;
+using WXOrdrPlatform.Core;
 
 namespace WXOrdrPlatform.Controllers
 {
-    public class UserController : Base
+    public class UserController : ApiController
     {
-        //
-        // GET: /User/
 
-        public ActionResult UserList()
+        #region 获取所有用户
+        /// <summary>  
+        /// 获取所有用户 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getUserList()
         {
-            return View();
-        }
-
-        #region 接口
-        public JsonResult getUserList()
-        {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            object data;
             try
             {
                 BLL.User user = new BLL.User();
                 DataTable dt = user.GetUserList();
-                res.Data = new
+                List<user> list = new List<user>();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    user u = new user();
+                    u.id = dt.Rows[i]["id"].ToString();
+                    u.name = dt.Rows[i]["name"].ToString();
+                    u.sex = dt.Rows[i]["sex"].ToString();
+                    u.birth = dt.Rows[i]["birth"].ToString();
+                    u.telephone = dt.Rows[i]["telephone"].ToString();
+                    u.village = dt.Rows[i]["village"].ToString();
+
+                    list.Add(u);
+                }
+
+                data = new
                 {
                     success = true,
-                    backData = CommonTool.JsonHelper.DataTableToJSON(dt)
+                    backData = list
 
                 };
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
-        public JsonResult getUserInfo(string openid)
+        #endregion
+
+        #region 获取所有用户
+        /// <summary>  
+        /// 获取所有用户 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getUserInfo(string openid)
         {
-            var res = new JsonResult();
+            object data;
             BLL.User user = new BLL.User();
             DataTable dt = user.GetUserBaseInfo(openid);
             if (dt.Rows.Count == 1)
             {
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = new
@@ -68,42 +100,58 @@ namespace WXOrdrPlatform.Controllers
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "用户不存在"
                 };
             }
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        public JsonResult updateUserInfo(string openID, string fieldName, string fieldValue)
+        #region 获取所有用户
+        /// <summary>  
+        /// 获取所有用户 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage updateUserInfo(string openID, string fieldName, string fieldValue)
         {
-            var res = new JsonResult();
+            object data;
             BLL.User user = new BLL.User();
             bool flag = user.UpdateUserInfo(openID, fieldName, fieldValue);
             if (flag)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "修改失败，请重试"
                 };
             }
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;//允许使用GET方式获取，否则用GET获取是会报错。
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
-
         #endregion
 
     }

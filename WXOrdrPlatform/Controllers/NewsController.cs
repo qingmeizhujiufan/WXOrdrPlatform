@@ -1,26 +1,29 @@
-﻿using BLL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using WXOrdrPlatform.Core;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Script.Serialization;
 using WXOrdrPlatform.Models;
+using WXOrdrPlatform.Core;
+
 
 namespace WXOrdrPlatform.Controllers
 {
-    public class NewsController : Controller
+    public class NewsController : ApiController
     {
-        //
-        // GET: /News/
-
-        #region 接口
-        //获取新闻列表
-        public JsonResult getNewsList(string conditionValue)
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getNewsList()
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            object data;
 
             try
             {
@@ -31,10 +34,9 @@ namespace WXOrdrPlatform.Controllers
                                     news_cover,
                                     news_brief,
                                     CONVERT(varchar(19) , create_time, 120 ) as create_time
-                                from dbo.wxop_news
-                                where news_title LIKE '%{0}%' 
+                                from dbo.wxop_news 
                                 order by create_time desc";
-                strSql = string.Format(strSql, conditionValue);
+                strSql = string.Format(strSql);
                 DataTable dt = DBHelper.SqlHelper.GetDataTable(strSql);
 
                 List<news> list = new List<news>();
@@ -51,7 +53,7 @@ namespace WXOrdrPlatform.Controllers
                     list.Add(_news);
                 }
 
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = new
@@ -62,21 +64,32 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //获取新闻详情
-        public JsonResult getNewsDetail(string newsId)
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getNewsDetail(string newsId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
             try
             {
                 BLL.News news = new BLL.News();
@@ -91,7 +104,7 @@ namespace WXOrdrPlatform.Controllers
                 _news.news_content = dt.Rows[0]["news_content"].ToString();
                 _news.create_time = dt.Rows[0]["create_time"].ToString();
 
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = _news
@@ -100,22 +113,33 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //新增或者修改新闻
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
         [SupportFilter]
-        public JsonResult saveAPNews(news n)
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage saveAPNews(news n)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
 
             string id = n.id;
             string news_type = n.news_type;
@@ -139,7 +163,7 @@ namespace WXOrdrPlatform.Controllers
 
                 if (flag)
                 {
-                    res.Data = new
+                    data = new
                     {
                         success = true
 
@@ -147,7 +171,7 @@ namespace WXOrdrPlatform.Controllers
                 }
                 else
                 {
-                    res.Data = new
+                    data = new
                     {
                         success = false,
                         backMsg = string.IsNullOrEmpty(id) ? "新增新闻失败" : "更新新闻信息失败"
@@ -157,49 +181,71 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //删除新闻
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
         [SupportFilter]
-        public JsonResult delNews(string newsId)
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage delNews(string newsId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
 
             BLL.News news = new BLL.News();
             bool flag = news.DelNews(newsId);
             if (flag)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "删除失败，请重试！"
                 };
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //获取案例列表
-        public JsonResult getCaseList()
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getCaseList()
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
 
             try
             {
@@ -219,7 +265,7 @@ namespace WXOrdrPlatform.Controllers
                     list.Add(_case);
                 }
 
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = new
@@ -230,21 +276,32 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //获取案例详情
-        public JsonResult getCaseDetail(string caseId)
+        #region 获取所有商品
+        /// <summary>  
+        /// 获取所有商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [AcceptVerbs("OPTIONS", "GET")]
+        public HttpResponseMessage getCaseDetail(string caseId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
             try
             {
                 BLL.Case ca = new BLL.Case();
@@ -257,7 +314,7 @@ namespace WXOrdrPlatform.Controllers
                 _case.detail_img = dt.Rows[0]["detail_img"].ToString();
                 _case.create_time = dt.Rows[0]["create_time"].ToString();
 
-                res.Data = new
+                data = new
                 {
                     success = true,
                     backData = _case
@@ -266,21 +323,33 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //新增或者修改案例
-        public JsonResult saveAPCase(@case n)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage saveAPCase(@case n)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
 
             string id = n.id;
             string cover_img = n.cover_img;
@@ -302,7 +371,7 @@ namespace WXOrdrPlatform.Controllers
 
                 if (flag)
                 {
-                    res.Data = new
+                    data = new
                     {
                         success = true
 
@@ -310,7 +379,7 @@ namespace WXOrdrPlatform.Controllers
                 }
                 else
                 {
-                    res.Data = new
+                    data = new
                     {
                         success = false,
                         backMsg = string.IsNullOrEmpty(id) ? "新增案例失败" : "更新案例信息失败"
@@ -320,41 +389,58 @@ namespace WXOrdrPlatform.Controllers
             }
             catch (Exception ex)
             {
-                res.Data = new
+                data = new
                 {
                     success = false
                 };
 
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
+        #endregion
 
-        //删除案例
-        public JsonResult delCase(string caseId)
+        #region 保存商品
+        /// <summary>  
+        /// 保存商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage delCase(string caseId)
         {
-            var res = new JsonResult();
-            res.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            Object data;
 
             BLL.Case @case = new BLL.Case();
             bool flag = @case.DelCase(caseId);
             if (flag)
             {
-                res.Data = new
+                data = new
                 {
                     success = true
                 };
             }
             else
             {
-                res.Data = new
+                data = new
                 {
                     success = false,
                     backMsg = "删除失败，请重试！"
                 };
             }
 
-            return res;
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
         }
         #endregion
 
