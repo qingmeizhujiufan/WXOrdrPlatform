@@ -27,6 +27,7 @@ namespace BLL
                                         ISNULL(hardware, '') as hardware,
                                         ISNULL(sealant, '') as sealant,
                                         ISNULL(status, 0) as status,
+                                        ISNULL(attaches, '') as attaches,
                                         ISNULL(coverAttaches, '') as coverAttaches,
                                         CONVERT(varchar(19) , create_time, 120 ) as create_time
                                         from dbo.wxop_product
@@ -90,6 +91,16 @@ namespace BLL
                             where id='{10}'";
             str = string.Format(str, name, unit, price, type, detail, attaches, coverAttaches, structuralSection, hardware, sealant, id);
             CommonTool.WriteLog.Write(str);
+            int flag = DBHelper.SqlHelper.ExecuteSql(str);
+
+            return flag > 0 ? true : false;
+        }
+
+        //删除商品
+        public bool DelProduct(string id)
+        {
+            string str = @"delete from dbo.wxop_product where id='{0}'";
+            str = string.Format(str, id);
             int flag = DBHelper.SqlHelper.ExecuteSql(str);
 
             return flag > 0 ? true : false;
