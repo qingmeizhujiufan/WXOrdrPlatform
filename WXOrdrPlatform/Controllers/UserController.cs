@@ -74,7 +74,6 @@ namespace WXOrdrPlatform.Controllers
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
-        [SupportFilter]
         [AcceptVerbs("OPTIONS", "GET")]
         public HttpResponseMessage getUserInfo(string openid)
         {

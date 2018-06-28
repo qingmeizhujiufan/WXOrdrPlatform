@@ -138,7 +138,7 @@
     viewModel.afterPayFor = function () {
         var params = {};
         params.orderId = '@ViewData["orderId"]';
-        Compost('/Order/payOrder', JSON.stringify(params), function (data) {
+        Compost('/api/Order/payOrder', JSON.stringify(params), function (data) {
             mui.toast('支付成功');
             mui('#pay').button('reset');
             viewModel.payResult(true);
@@ -148,7 +148,7 @@
     viewModel.getOrderInfo = function () {
         var params = {};
         params.orderId = '@ViewData["orderId"]';
-        Comget('/Order/getOrderInfo', params, function (data) {
+        Comget('/api/Order/getOrderInfo', params, function (data) {
             var data = data.backData;
             viewModel.orderNo = data.orderNo;
             viewModel.money(data.payMoney);

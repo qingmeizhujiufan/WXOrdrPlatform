@@ -40,6 +40,10 @@ namespace WXOrdrPlatform.Controllers
                     o.userName = dt.Rows[i]["userName"].ToString();
                     o.telephone = dt.Rows[i]["telephone"].ToString();
                     o.addressId = dt.Rows[i]["addressId"].ToString();
+                    o.province = dt.Rows[i]["province"].ToString();
+                    o.city = dt.Rows[i]["city"].ToString();
+                    o.county = dt.Rows[i]["county"].ToString();
+                    o.area = dt.Rows[i]["area"].ToString();
                     o.installDate = dt.Rows[i]["installDate"].ToString();
                     o.installSize = Convert.ToSingle(dt.Rows[i]["installSize"].ToString());
                     o.installNum = Convert.ToInt32(dt.Rows[i]["installNum"].ToString());
@@ -75,9 +79,9 @@ namespace WXOrdrPlatform.Controllers
         }
         #endregion
 
-        #region 获取所有商品
+        #region 获取订单信息
         /// <summary>  
-        /// 获取所有商品 
+        /// 获取订单信息
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
@@ -140,7 +144,6 @@ namespace WXOrdrPlatform.Controllers
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
-        [SupportFilter]
         [AcceptVerbs("OPTIONS", "POST")]
         public HttpResponseMessage submitOrder(order or)
         {

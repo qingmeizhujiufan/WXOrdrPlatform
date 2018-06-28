@@ -208,7 +208,7 @@
         var params = {
             id: '@ViewData["id"]'
         };
-        Comget('/Product/getProductInfo', params, function (data) {
+        Comget('/api/Product/getProductInfo', params, function (data) {
             var data = data.backData;
             viewModel.info(data);
             console.log('info == ', viewModel.info());

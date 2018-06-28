@@ -121,7 +121,7 @@
     viewModel.getUserInfo = function () {
         var param = {};
         param.openid = '@ViewData["openid"]';
-        Comget('/User/getUserInfo', param, function (data) {
+        Comget('/api/User/getUserInfo', param, function (data) {
             var data = data.backData;
             viewModel.name(data.name);
             viewModel.telephone(data.telephone);
@@ -164,12 +164,11 @@
         params.userName = userName;
         params.telephone = telephone;
         params.installSize = installSize;
-        params.installNum = installNum;
         params.installDate = installDate;
         params.payMoney = payMoney;
 
         loadingIn();
-        Compost('/Order/submitOrder', JSON.stringify(params), function (data) {
+        Compost('/api/Order/submitOrder', JSON.stringify(params), function (data) {
             var orderId = data.id;
             mui.toast('订单生成成功');
             loadingOut();
@@ -218,7 +217,7 @@
     viewModel.getProductInfo = function () {
         var params = {};
         params.id = '@ViewData["productId"]';
-        Comget('/Product/getProductInfo', params, function (data) {
+        Comget('/api/Product/getProductInfo', params, function (data) {
             var data = data.backData;
             viewModel.s_pay = parseFloat(data.price);
 

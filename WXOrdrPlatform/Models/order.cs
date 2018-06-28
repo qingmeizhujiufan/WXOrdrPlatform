@@ -17,6 +17,10 @@ namespace WXOrdrPlatform.Models
         public string userName { set; get; }
         public string telephone { set; get; }
         public string addressId { set; get; }
+        public string province { set; get; }
+        public string city { set; get; }
+        public string county { set; get; }
+        public string area { set; get; }
         public string installDate { set; get; }
         public float installSize { set; get; }
         public int installNum { set; get; }

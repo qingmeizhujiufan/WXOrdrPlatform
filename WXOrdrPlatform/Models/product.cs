@@ -19,5 +19,6 @@ namespace WXOrdrPlatform.Models
         public string status { set; get; }
         public string attaches { set; get; }
         public string coverAttaches { set; get; }
+        public string create_time { set; get; }
     }
 }

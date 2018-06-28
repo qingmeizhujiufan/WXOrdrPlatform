@@ -167,36 +167,39 @@
     }
 
     viewModel.queryList = function () {
-        Comget('/Product/getProductList', null, function (data) {
-            var productList = strToJson(data.backData);
-            productList.map(function (item, index) {
-                var coverAttaches = item.coverAttaches;
-                item.fileList = [];
-                if (coverAttaches === '') {
-                    for (var i = 0; i < 3; i++) {
-                        item.fileList.push({
-                            index: i + 1,
-                            filePath: '/Images/test/t_1.png'
-                        });
-                    }
-                } else {
-                    var id_array = coverAttaches.split(',');
-                    for (var i = 0; i < 3; i++) {
-                        if (id_array.length >= 3) {
+        Comget('/api/Product/getProductList', null, function (data) {
+            if (data.success) {
+                var productList = data.backData;
+                productList.map(function (item, index) {
+                    var coverAttaches = item.coverAttaches;
+                    item.fileList = [];
+                    if (coverAttaches === '') {
+                        for (var i = 0; i < 3; i++) {
                             item.fileList.push({
                                 index: i + 1,
-                                filePath: '/UpLoadFile/' + coverAttaches.split(',')[i] + '.png'
-                            });
-                        } else {
-
-                            item.fileList.push({
-                                index: i + 1,
-                                filePath: (i <= id_array.length - 1) ? ('/UpLoadFile/' + coverAttaches.split(',')[i] + '.png') : ('/Images/test/t_1.png')
+                                filePath: '/Images/test/t_1.png'
                             });
                         }
+                    } else {
+                        var id_array = coverAttaches.split(',');
+                        for (var i = 0; i < 3; i++) {
+                            if (id_array.length >= 3) {
+                                item.fileList.push({
+                                    index: i + 1,
+                                    filePath: '/UpLoadFile/' + coverAttaches.split(',')[i] + '.png'
+                                });
+                            } else {
+
+                                item.fileList.push({
+                                    index: i + 1,
+                                    filePath: (i <= id_array.length - 1) ? ('/UpLoadFile/' + coverAttaches.split(',')[i] + '.png') : ('/Images/test/t_1.png')
+                                });
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
+
             viewModel.productList(productList);
             loadingOut();
         });

@@ -92,10 +92,10 @@
 
     viewModel.queryList = function () {
         var params = {};
-        params.conditionValue = viewModel.conditionValue().trim();
-        Comget('/Product/getProductList', params, function (data) {
+        //params.conditionValue = viewModel.conditionValue().trim();
+        Comget('/api/Product/getProductList', params, function (data) {
             if (data.success) {
-                var productList = strToJson(data.backData);
+                var productList = data.backData;
                 productList.map(function (item, index) {
                     var coverAttaches = item.coverAttaches;
                     if (coverAttaches === '') {

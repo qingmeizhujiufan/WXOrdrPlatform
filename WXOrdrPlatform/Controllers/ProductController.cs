@@ -39,7 +39,10 @@ namespace WXOrdrPlatform.Controllers
                     product.structuralSection = dt.Rows[i]["structuralSection"].ToString();
                     product.hardware = dt.Rows[i]["hardware"].ToString();
                     product.sealant = dt.Rows[i]["sealant"].ToString();
+                    product.attaches = dt.Rows[i]["attaches"].ToString();
+                    product.coverAttaches = dt.Rows[i]["coverAttaches"].ToString();
                     product.status = dt.Rows[i]["status"].ToString();
+                    product.create_time = dt.Rows[i]["create_time"].ToString();
 
                     list.Add(product);
                 }
@@ -75,7 +78,6 @@ namespace WXOrdrPlatform.Controllers
         /// </summary>  
         /// <param name="id">id</param>  
         /// <returns></returns>
-        [SupportFilter]
         [AcceptVerbs("OPTIONS", "GET")]
         public HttpResponseMessage getProductInfo(string id)
         {
@@ -182,6 +184,50 @@ namespace WXOrdrPlatform.Controllers
                     success = false
                 };
 
+            }
+
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(data);
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            };
+        }
+        #endregion
+
+        #region 删除商品
+        /// <summary>  
+        /// 删除商品 
+        /// </summary>  
+        /// <param name="id">id</param>  
+        /// <returns></returns>
+        [SupportFilter]
+        [AcceptVerbs("OPTIONS", "POST")]
+        public HttpResponseMessage delProduct(dynamic d)
+        {
+            string id = d.id;
+            object data = new object();
+
+            BLL.Product product = new BLL.Product();
+            bool flag = false;
+            flag = product.DelProduct(id);
+
+            if (flag)
+            {
+                data = new
+                {
+                    success = true
+
+                };
+            }
+            else
+            {
+                data = new
+                {
+                    success = false,
+                    backMsg = "删除商品失败"
+
+                };
             }
 
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -328,7 +374,7 @@ namespace WXOrdrPlatform.Controllers
             {
                 data = new
                 {
-                    success = true,
+                    success = false,
                     backMsg = "删除品牌失败"
 
                 };
