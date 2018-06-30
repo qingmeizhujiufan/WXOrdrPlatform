@@ -368,3 +368,8 @@ D:\项目\WXOrdrPlatform\CommonTool\bin\Debug\CommonTool.pdb
 D:\项目\WXOrdrPlatform\CommonTool\bin\Debug\Newtonsoft.Json.dll
 D:\项目\WXOrdrPlatform\CommonTool\obj\Debug\CommonTool.dll
 D:\项目\WXOrdrPlatform\CommonTool\obj\Debug\CommonTool.pdb
+D:\my-project\WXOrdrPlatform\CommonTool\bin\Debug\CommonTool.dll
+D:\my-project\WXOrdrPlatform\CommonTool\bin\Debug\CommonTool.pdb
+D:\my-project\WXOrdrPlatform\CommonTool\bin\Debug\Newtonsoft.Json.dll
+D:\my-project\WXOrdrPlatform\CommonTool\obj\Debug\CommonTool.dll
+D:\my-project\WXOrdrPlatform\CommonTool\obj\Debug\CommonTool.pdb

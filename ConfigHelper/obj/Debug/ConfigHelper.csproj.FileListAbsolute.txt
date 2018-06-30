@@ -570,3 +570,11 @@ D:\项目\WXOrdrPlatform\ConfigHelper\bin\Debug\CommonTool.pdb
 D:\项目\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.csprojResolveAssemblyReference.cache
 D:\项目\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.dll
 D:\项目\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.pdb
+D:\my-project\WXOrdrPlatform\ConfigHelper\bin\Debug\ConfigHelper.dll
+D:\my-project\WXOrdrPlatform\ConfigHelper\bin\Debug\ConfigHelper.pdb
+D:\my-project\WXOrdrPlatform\ConfigHelper\bin\Debug\CommonTool.dll
+D:\my-project\WXOrdrPlatform\ConfigHelper\bin\Debug\Newtonsoft.Json.dll
+D:\my-project\WXOrdrPlatform\ConfigHelper\bin\Debug\CommonTool.pdb
+D:\my-project\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.csprojResolveAssemblyReference.cache
+D:\my-project\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.dll
+D:\my-project\WXOrdrPlatform\ConfigHelper\obj\Debug\ConfigHelper.pdb

@@ -840,3 +840,16 @@ D:\项目\WXOrdrPlatform\External\bin\Debug\ConfigHelper.pdb
 D:\项目\WXOrdrPlatform\External\obj\Debug\External.csprojResolveAssemblyReference.cache
 D:\项目\WXOrdrPlatform\External\obj\Debug\External.dll
 D:\项目\WXOrdrPlatform\External\obj\Debug\External.pdb
+D:\my-project\WXOrdrPlatform\External\bin\Debug\External.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\External.pdb
+D:\my-project\WXOrdrPlatform\External\bin\Debug\CommonTool.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\DBHelper.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\Newtonsoft.Json.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\MySql.Data.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\ConfigHelper.dll
+D:\my-project\WXOrdrPlatform\External\bin\Debug\CommonTool.pdb
+D:\my-project\WXOrdrPlatform\External\bin\Debug\DBHelper.pdb
+D:\my-project\WXOrdrPlatform\External\bin\Debug\ConfigHelper.pdb
+D:\my-project\WXOrdrPlatform\External\obj\Debug\External.csprojResolveAssemblyReference.cache
+D:\my-project\WXOrdrPlatform\External\obj\Debug\External.dll
+D:\my-project\WXOrdrPlatform\External\obj\Debug\External.pdb
